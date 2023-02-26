@@ -1,3 +1,108 @@
+matomo (4.13.0-1) stable; urgency=high
+
+  * Releasing Matomo 4.13.0
+  * Harden check for valid redirect urls in logme method [by @sgiehl,
+    @peterhashair] (Closes: #19917)
+  * Ensure Tag Manager update are run on updates [by @sgiehl] (Closes:
+    #19887)
+  * Detect GA3, GA4 or GTM during installation and suggest migration
+    guides [by @bx80, @peterhashair] (Closes: #19957)
+  * Prevent exception possibilities in retrieving columns from previous
+    data row [by @sgiehl] (Closes: #19903)
+  * Add help icon ability to subcategories in the Twig nav menu template
+    [by @peterhashair] (Closes: #19909)
+  * Hide widget when not found (goals, custom dimensions, custom
+    reports) [by @peterhashair] (Closes: #9969)
+  * Fix SQL syntax error due to incorrect parameter [by @sgiehl]
+    (Closes: #18550)
+  * Improve / fix handling of best converting page on goal overview [by
+    @sgiehl] (Closes: #19512)
+  * Add exception for invalid limit before grouping in API request [by
+    @peterhashair] (Closes: #19867)
+  * Fix for opt-out toggling on page load and incorrect default state
+    [by @bx80] (Closes: #19879)
+  * Avoid escaping of characters other than " [by @peterhashair,
+    @sgiehl] (Closes: #19899)
+  * Handle invalid variable type sent to Period/Range.php [by @sgiehl]
+    (Closes: #19914)
+  * Avoid double formatting of conversion rate in comparison mode [by
+    @sgiehl, @bx80] (Closes: #19970)
+  * Correctly escape email addresses in mailto links [by @sgiehl]
+    (Closes: #19992)
+  * Ensure performance timings are sent as integer values [by @sgiehl]
+    (Closes: #17371)
+  * Handle encoding in translation files [by @sgiehl] (Closes: #19626)
+  * Update Semver dependency [by @sgiehl] (Closes: #19846)
+  * Update autocomplete values [by @peterhashair] (Closes: #19872)
+  * Fix flat lines in Sparklines when comparing segments [by @sgiehl]
+    (Closes: #19968)
+  * Fix value of delete_logs_enable not displayed correctly in UI [by
+    @sgiehl] (Closes: #19919)
+  * Add help link Vue component [by @peterhashair] (Closes: #19922)
+  * Allow calls to opcache_reset to be disabled in config [by @samjf,
+    @justinvelluppillai] (Closes: #19948)
+  * Fix incomplete tool tip for best converting entry page in goals
+    conversion overview [by @peterhashair] (Closes: #19960)
+  * Resolve inaccurate charts when comparing 2 segments with week period
+    in the visits overview [by @peterhashair] (Closes: #19973)
+  * Resolve incorrect archiving error notification [by @sgiehl, @bx80]
+    (Closes: #20017)
+  * Add custom visitor cookie timeout setting [by @tomper00,
+    @AltamashShaikh] (Closes: #563)
+  * Add translations for tags,triggers and variables [by
+    @AltamashShaikh] (Closes: #568)
+  * Resolve translation key is not loaded error on "Versions" page [by
+    @snake14] (Closes: #559)
+  * Update ecommerce tracking in etracker [by @ben-dw, @AltamashShaikh]
+    (Closes: #311)
+  * Fix a translation key not being registered with the client [by
+    @snake14] (Closes: #560)
+  * Update etracker source URL [by @ben-dw, @AltamashShaikh] (Closes:
+    #571)
+  * Add escaping for percent sign for
+    ScrollReachTriggerPercentageDescription key [by @AltamashShaikh,
+    @snake14] (Closes: #574)
+  * Detect new brands : UE, Hykker [by @sanchezzzhak, @sgiehl] (Closes:
+    #7268)
+  * Detect new brands : Hiberg, Hartens and detect existing brand :
+    Infinix [by @sanchezzzhak, @sgiehl] (Closes: #7273)
+  * Identify Microsoft Office user agent [by @sanchezzzhak] (Closes:
+    #7275)
+  * Improved detection of office apps and detect ZorinOS [by
+    @sanchezzzhak, @sgiehl] (Closes: #7276)
+  * Detect existing brand : Vivo, Zebra, Oppo, Xiaomi, Tecno, Samsung
+    [by @sanchezzzhak, @sgiehl] (Closes: #7277)
+  * Detect new brands : AMA, OSCAL and detect existing brand : Philips,
+    Stylo, DEXP, X96, H96, Gionee, Wiko [by @sanchezzzhak, @sgiehl]
+    (Closes: #7280)
+  * Detect new brands : Fluo, Quatro and detect existing brand : iLife,
+    Nvidia, Toshiba, Smooth Mobile, Samsung, Allwinner, China Mobile [by
+    @sanchezzzhak] (Closes: #7282)
+  * Change client family to null instead of empty string for consistency
+    [by @TheOnlyAl, @sgiehl] (Closes: #7283)
+  * Adds detection for various libraries and improve detection for
+    iPadOS [by @liviuconcioiu, @sanchezzzhak] (Closes: #7284)
+  * Detect new brands : ALLINmobile and detect existing brand : Dell,
+    Coolpad, Mint, Tecno Mobile [by @sanchezzzhak, @sgiehl] (Closes:
+    #7286)
+  * Detect new brands : Uniden and detect existing brand : Vivo, Infinix
+    [by @sanchezzzhak, @sgiehl] (Closes: #7287)
+  * Detect new brands : TETC, Vizmo and detect existing brand : Oppo,
+    Google. Samsung, Huawei, Sony, Cherry, Evercoss [by @sanchezzzhak,
+    @sgiehl] (Closes: #7289)
+  * Adds client hints test for Brave browser [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7290)
+  * Detect new brand : 10moons and detect existing brand : iBrit,
+    iVooMi, Samsung, LG [by @sanchezzzhak, @sgiehl] (Closes: #7291)
+  * Detect new brands : Farassoo, Ophone, XWave and detect existing
+    brand : InFone [by @sanchezzzhak, @sgiehl] (Closes: #7292)
+  * Detect new brands : Foxxd, K-Lite and Detect devices for existing
+    brand: Hotwav [by @sanchezzzhak, @sgiehl] (Closes: #7294)
+  * Avoid escaping of characters other than " [by @sgiehl] (Closes: #21)
+  * Fix possible notices on PHP 8.1 [by @sgiehl, @bx80] (Closes: #108)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 17:39:10 +0100
+
 matomo (4.12.3-1) stable; urgency=high
 
   * Releasing Matomo 4.12.3
