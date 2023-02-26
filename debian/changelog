@@ -1,3 +1,38 @@
+matomo (4.12.2-1) stable; urgency=high
+
+  * Releasing Matomo 4.12.2
+  * Goal visits log query performance improvement - don't execute the
+    query when no idVisits [by @tsteur, @sgiehl] (Closes: #19853)
+  * Ensure empty report tables also use max width [by @sgiehl] (Closes:
+    #19819)
+  * Avoid loading goals data multiple times for goal metrics [by
+    @sgiehl, @bx80] (Closes: #19838)
+  * Allow empty excludedReferrers on the global setting [by
+    @peterhashair] (Closes: #19833)
+  * Adds missing escaping [by @sgiehl, @peterhashair] (Closes: #19863)
+  * Upgrade to Matomo 4.12 breaks Matomo when DeviceDetectorCache plugin
+    is installed [by @peterhashair] (Closes: #19768)
+  * Fix failures link to Learn More [by @PabloCastellano, @bx80]
+    (Closes: #19870)
+  * Visits Overview accessibility improvement - remove redundant
+    information [by @audrasjb, @sgiehl] (Closes: #19808)
+  * TourEngagement accessibility improvement - Remove redundant
+    information [by @audrasjb, @sgiehl] (Closes: #19809)
+  * Fix Referrers.getKeywordsFromSearchEngineId API for invalid subtable
+    ids [by @sgiehl] (Closes: #19817)
+  * PHP8 fix - Ensure data retention settings are respected  [by
+    @sgiehl, @bx80] (Closes: #19869)
+  * Check downloaded referrer spam list for validity [by @sgiehl]
+    (Closes: #19841)
+  * Return correct parameter divId for JS opt-out [by @DevDavido,
+    @sgiehl] (Closes: #19827)
+  * Fix array to string conversion warning in userOptOut [by @bx80]
+    (Closes: #19852)
+  * Ensure password check can only throw wrong password error [by
+    @sgiehl, @peterhashair] (Closes: #19861)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 17:22:13 +0100
+
 matomo (4.12.0-1) stable; urgency=high
 
   * Releasing Matomo 4.12.0
