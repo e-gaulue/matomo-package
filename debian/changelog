@@ -1,3 +1,288 @@
+matomo (4.12.0-1) stable; urgency=high
+
+  * Releasing Matomo 4.12.0
+  * Support Sec-CH-UA Client Hints in addition to UserAgent [by
+    @justinvelluppillai, @sgiehl] (Closes: #16125)
+  * Offer opt out without iframe / 3rd party cookies [by @bx80] (Closes:
+    #17452)
+  * Handle 429 response code within UI [by @peterhashair] (Closes:
+    #19233)
+  * Have a message in the UI after install saying this plugin does not
+    track to Cloud [by @sgiehl] (Closes: #19028)
+  * Improve password confirmation in UI & API [by @sgiehl] (Closes:
+    #19525)
+  * Fix average order value graph flattening out to value 0 [by @bx80]
+    (Closes: #15262)
+  * Fix sizing of subtables with different column count [by @sgiehl]
+    (Closes: #19540)
+  * Ensure download urls are encoded correctly in visits log [by
+    @sgiehl] (Closes: #15924)
+  * Show the selected conversion rate on Goals->Overview evolution graph
+    [by @peterhashair] (Closes: #18766)
+  * Show correct "Rows to display" on Evolution graph [by @peterhashair]
+    (Closes: #18781)
+  * Improve password confirmation in UI & API [by @sgiehl] (Closes:
+    #19335)
+  * Fixes Goal row evolution with double quotes in the goal name
+    resulting in an error [by @sgiehl] (Closes: #19485)
+  * Ensure API requests with session auth check 2fa status [by @sgiehl,
+    @peterhashair] (Closes: #19550)
+  * Require password confirmation when removing users through UI [by
+    @sgiehl] (Closes: #19586)
+  * Require password confirmation when removing a site in UI [by
+    @sgiehl] (Closes: #19591)
+  * Use brute force detection for reset password action [by @sgiehl]
+    (Closes: #19598)
+  * Require password confirmation when inviting a user in UI [by
+    @sgiehl, @bx80] (Closes: #19611)
+  * Provide possibility to configure referrer exclusion list [by
+    @sgiehl] (Closes: #19302)
+  * Fixes glossary navigation [by @ulcuber, @sgiehl] (Closes: #19387)
+  * Allow custom cookie expiry date for `optUserOut()` &
+    `forgetUserOptOut()` functions [by @futureweb] (Closes: #19530)
+  * Add config option for database errors to ignore during updates [by
+    @bx80] (Closes: #19572)
+  * Improve role/capability handling in usermanager [by @sgiehl]
+    (Closes: #18750)
+  * Fix adjacent elements to dashboard-dropdown-menu-modal overlapping
+    on narrower screens [by @peterhashair] (Closes: #19254)
+  * Fix CSP header when viewing plugin details [by @sgiehl,
+    @justinvelluppillai] (Closes: #19632)
+  * Fixes different height of selectors [by @ulcuber, @sgiehl] (Closes:
+    #19446)
+  * Fixes icon-menu-hamburger size [by @ulcuber, @sgiehl] (Closes:
+    #19456)
+  * Improve URL detection in mod_pagespeed check [by @sgiehl] (Closes:
+    #12024)
+  * Fix problem with too long browser version [by @sgiehl] (Closes:
+    #19319)
+  * Attempt to handle incorrectly prefixed region codes [by @sgiehl]
+    (Closes: #19323)
+  * Fix FAQ links using # in the link no longer working [by @Starker3]
+    (Closes: #19346)
+  * Improve reset password email formatting to fix broken link [by
+    @bx80] (Closes: #19354)
+  * Fix number formatting in additional Y axis in (evolution) charts [by
+    @sgiehl] (Closes: #19360)
+  * Fix date range handling to prevent evolution graph display being
+    confused when changing the period [by @sgiehl] (Closes: #19393)
+  * Fixed incorrect Cuban province names on visitor map [by @bx80,
+    @sgiehl] (Closes: #19508)
+  * Fix for current year not processed for new custom reports [by @bx80,
+    @sgiehl] (Closes: #19569)
+  * Fix placing series / series picker in charts [by @sgiehl] (Closes:
+    #19588)
+  * Fix for page goals visualization showing hits instead of visits [by
+    @bx80] (Closes: #19615)
+  * Include conversion attribution in visitor details [by @sgiehl]
+    (Closes: #19269)
+  * Improve debugging via Vardumper overriding [by @ulcuber, @sgiehl]
+    (Closes: #19308)
+  * Login plugin language reworked [by @comradekingu,
+    @justinvelluppillai] (Closes: #19333)
+  * Setting prepare callback before validation [by @ulcuber,
+    @justinvelluppillai] (Closes: #19363)
+  * Fix typo in Revenue Entry Documentation translation string [by
+    @ulcuber, @justinvelluppillai] (Closes: #19374)
+  * Added translation keys for scope titles in custom dimensions [by
+    @ulcuber, @sgiehl] (Closes: #19385)
+  * Implement url parameter to ignore referrer [by @sgiehl] (Closes:
+    #19420)
+  * Full width field in settings [by @ulcuber, @sgiehl] (Closes: #19454)
+  * Add TikTok to socical networks [by @sgiehl] (Closes: #19458)
+  * Allow reading consent removed cookie even if cookies are disabled
+    [by @sgiehl] (Closes: #19491)
+  * Update outdated FAQ and Guide links [by @Starker3, @sgiehl] (Closes:
+    #19510)
+  * Exclude paypal as referrer in javascript tracker [by @sgiehl,
+    @justinvelluppillai] (Closes: #19517)
+  * Update HTTPs security check, when client is using HTTP just throw a
+    warning on diagnostic [by @peterhashair] (Closes: #19527)
+  * Implement cookie expire time - forgetConsentGiven [by @futureweb,
+    @sgiehl] (Closes: #19532)
+  * Do not accept invalid SSL certificates for requests to ASPSMS and
+    Clockwork [by @sgiehl, @bx80] (Closes: #19594)
+  * Adds Microsoft and Yandex click ids to default query parameters
+    exclusion list [by @AltamashShaikh, @sgiehl] (Closes: #19673)
+  * Add support for `data-matomo-mask` attribute on events [by @snake14]
+    (Closes: #503)
+  * Prevent possible XSS via changeDebugUrl [by @AltamashShaikh]
+    (Closes: #519)
+  * Add description/comment field to Tags/Triggers/Variables for better
+    documentation of functionality [by @snake14] (Closes: #249)
+  * Handle Click Events correctly in shadowDOM (web components) [by
+    @multikoop] (Closes: #543)
+  * Added goal revenue field to tag edit view [by @snake14] (Closes:
+    #334)
+  * Fixed issue when renaming Matomo Configuration variable, its name is
+    not propagated to the tags using it [by @snake14] (Closes: #314)
+  * Improve Start and end date for Tags handling of timezone [by
+    @AltamashShaikh] (Closes: #511)
+  * Fix for Tagmanager working along with CSP when triggering a HTML tag
+    [by @snake14] (Closes: #326)
+  * Show info icon documentation links when defining triggers [by
+    @snake14] (Closes: #495)
+  * Fixes UI issue by setting container selector max width [by @ulcuber]
+    (Closes: #504)
+  * Add a link to the documentation about the datalayer when the
+    container tracking code is shown [by @snake14] (Closes: #541)
+  * Update # FAQ Links to match new knowledge base structure [by
+    @Starker3, @sgiehl] (Closes: #77)
+  * Adds support for client hints [by @sgiehl] (Closes: #104)
+  * Add detection for postmarket os (Closes: #7082)
+  * Detect new brands: Intel, PlusStyle, New Bridge, ZIK, Famous,
+    Facetel, HLLO, LNMBBS, Quest, SNAMI, TeachTouch, YUMKEM, TTK-TV,
+    Emporia, GEOZON, iReplace, actiMirror [by @sanchezzzhak, @sgiehl]
+    (Closes: #7129)
+  * Detect devices for several existing brands - Acer, Ulefone,
+    Vodafone, Sony, Xiaomi [by @sanchezzzhak, @sgiehl] (Closes: #7134)
+  * Detect devices for existing brands - RoyQueen, Sico, Digicel, Xolo
+    [by @sanchezzzhak, @sgiehl] (Closes: #7137)
+  * Fix version truncation for client hints [by @sgiehl] (Closes: #7138)
+  * Detect devices for existing brands - Samsung, QMovile, MyPhone,
+    Huawei [by @sanchezzzhak, @sgiehl] (Closes: #7140)
+  * Detect Petal Search app and Detect Nova 9 SE device for Huawei brand
+    [by @sanchezzzhak, @sgiehl] (Closes: #7141)
+  * Detect devices for existing brands - Nubia, Stylo, Kivi and others
+    [by @sanchezzzhak, @sgiehl] (Closes: #7142)
+  * Add bots: aiHitBot, ADmantX Service Fetcher, DomainCrawler,
+    DNSResearchBot, AdAuth, Faveeo, Kozmonavt, CriteoBot (Closes: #7143)
+  * Detect bots: aiHitBot, ADmantX Service Fetcher, DomainCrawler,
+    DNSResearchBot, AdAuth, Faveeo, Kozmonavt, CriteoBot [by
+    @sanchezzzhak, @sgiehl] (Closes: #7144)
+  * Detect devices for existing brands - FiGi, Xiaomi, Hotwav, FiGi [by
+    @sanchezzzhak, @sgiehl] (Closes: #7145)
+  * Detect devices for existing brands - Cherry Mobile, Alcatel,
+    Panasonic, Symphony and others [by @sanchezzzhak, @sgiehl] (Closes:
+    #7147)
+  * Add detection LastMod Bot [by @abordage, @sanchezzzhak] (Closes:
+    #7148)
+  * Detect app Snapchat for Android [by @juliamatsak, @sanchezzzhak]
+    (Closes: #7149)
+  * Detect devices for existing brands - Artel, Allview, Sony, F2 Mobile
+    and others [by @sanchezzzhak, @sgiehl] (Closes: #7150)
+  * Improve performance by skipping device parse if useragent matches
+    desktop pattern [by @sanchezzzhak, @sgiehl] (Closes: #7151)
+  * Detect devices for existing brands - Sharp, Hyundai, Starmobile [by
+    @sanchezzzhak, @sgiehl] (Closes: #7152)
+  * Detect devices for existing brands - Infinix, iBrit, Vivax, Karbonn
+    [by @sanchezzzhak, @sgiehl] (Closes: #7154)
+  * Detect devices for existing brands - Motorola, QMobile, Infinix and
+    others [by @sanchezzzhak, @sgiehl] (Closes: #7155)
+  * Adds detection for apps - Amazon shopping, Snapchat, OkHttp, PayPal
+    IPN and others [by @liviuconcioiu, @sanchezzzhak] (Closes: #7156)
+  * Added Internet Browser Secure, Hexa Web Browser, Browspeed Browser
+    to available browsers [by @sanchezzzhak, @sgiehl] (Closes: #7158)
+  * Detect devices for existing brands - Winnovo, Samsung, Realme,
+    Maxtron and others [by @sanchezzzhak, @sgiehl] (Closes: #7160)
+  * Detect devices for existing brands - iHunt, Aspera, Pixelbook,
+    QMobile [by @sanchezzzhak, @sgiehl] (Closes: #7161)
+  * Improves version detection for iOS, macOS and tvOS [by
+    @liviuconcioiu, @sanchezzzhak] (Closes: #7162)
+  * Improves version detection for iPadOS [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7163)
+  * Detect devices for existing brands - QMobile, Fero, Blu, Hometech,
+    Infinix [by @sanchezzzhak, @sgiehl] (Closes: #7164)
+  * Adds detection for various apps and browsers [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7165)
+  * Detect browsers: Rabbit Private Browser, Office Browser, Lynket
+    Browser, Vivid Browser Mini, Yo Browser, Yuzu Browser, BF Browser, G
+    Browser [by @sanchezzzhak, @sgiehl] (Closes: #7166)
+  * Adds detection for Nova and improves version detection for Fedora,
+    iOS, macOS, Mandriva, Mint operating systems [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7167)
+  * Adds detection for various bots and apps [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7168)
+  * Adds detection for Keepsafe Browser, Inspect Browser and improves
+    detection for Seznam Browser [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7169)
+  * Detect devices - ClearPHONE, Mintt, Sky Elite D5, and others [by
+    @liviuconcioiu, @sanchezzzhak] (Closes: #7171)
+  * Detect devices for existing brands - Hardkernel, Blu, AT&T, Vivo [by
+    @sanchezzzhak, @sgiehl] (Closes: #7176)
+  * Detect devices for existing brands [by @sanchezzzhak, @sgiehl]
+    (Closes: #7177)
+  * Detect devices Logic L4T, Mastertech, and others [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7178)
+  * Adds detection for various devices and improves os detection [by
+    @liviuconcioiu, @sanchezzzhak] (Closes: #7179)
+  * Rename Oculus brand to Meta and improves detection for Meta Quest 2
+    [by @liviuconcioiu, @sanchezzzhak] (Closes: #7181)
+  * Adds detection for Seolyt Bot [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7182)
+  * Detect devices for existing brands and new brands - Unistrong,
+    Equator, AXXA [by @sanchezzzhak, @sgiehl] (Closes: #7183)
+  * Detect devices for existing and new brands - D-Tech, OneClick [by
+    @sanchezzzhak, @sgiehl] (Closes: #7184)
+  * Detect devices for existing and new brand - iXTech [by
+    @sanchezzzhak, @sgiehl] (Closes: #7186)
+  * Detect devices for existing and new brands - BlueSky, Legend, Vue
+    Micro [by @sanchezzzhak, @sgiehl] (Closes: #7187)
+  * Detect devices for existing and new brands - NTT West, JREN, Tibuta,
+    ATOL, FILIX [by @sanchezzzhak, @sgiehl] (Closes: #7190)
+  * Adds detection for LinkWalker bot (Closes: #7191)
+  * Optimise devices detection for apple [by @sanchezzzhak] (Closes:
+    #7193)
+  * Detect Container-related tools (Closes: #7194)
+  * Detect new browsers and apps - Tint Browser, hola!, RedReader [by
+    @sanchezzzhak] (Closes: #7197)
+  * Adds detection for RouterOS [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7198)
+  * Adds detection for INETDEX-BOT and NETZZAPPEN [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7199)
+  * Detect devices for existing and new brands - HexaByte, CipherLab,
+    BrandCode, Lumitel, Elevate [by @sanchezzzhak] (Closes: #7201)
+  * Detect mobile app for Microsoft Office Access [by @sanchezzzhak,
+    @sgiehl] (Closes: #7202)
+  * Improves detection for Fairphone devices and Atom, Ecosia, Iridium
+    browsers [by @liviuconcioiu, @sgiehl] (Closes: #7203)
+  * Various consumer electronics detected as bots (Closes: #7204)
+  * Improves detection for Google and Roku devices [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7206)
+  * Detect devices for existing and new brands - Ceibal, Weelikeit [by
+    @sanchezzzhak, @sgiehl] (Closes: #7208)
+  * Improves client hints version detection for Atom, hola! Browser,
+    Opera, Smart Lenovo Browser [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7209)
+  * Detect devices for existing and new brands - Boost, Orbsmart, TOX
+    [by @sanchezzzhak, @sgiehl] (Closes: #7211)
+  * Adds detection for Panscient bot [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7212)
+  * Detect devices for existing and new brands - HiHi, M3 Mobile,
+    Hugerock, Coopers [by @sanchezzzhak, @sgiehl] (Closes: #7213)
+  * Detect devices for existing and new brands - iStar, ENIE, Dcode [by
+    @sanchezzzhak, @sgiehl] (Closes: #7215)
+  * Adds detection for Smart Kassel, X96Q brands and improves detection
+    for various browsers, os, libraries [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7216)
+  * Adds detection for Amerigo, Internet Browser Private, 18+ Privacy,
+    Beyond Private, Black Lion [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7217)
+  * Adds detection for Wiseiplay, Always Safe Security 24, Zoe Business
+    [by @liviuconcioiu, @sanchezzzhak] (Closes: #7218)
+  * Detect devices for existing and new brands - Stream [by
+    @sanchezzzhak, @sgiehl] (Closes: #7219)
+  * Detect Open Browser fast 5G [by @Simbiat, @sanchezzzhak] (Closes:
+    #7220)
+  * Adds detection for various apps [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7221)
+  * Adds detection for various browsers [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7222)
+  * Detect browsers for ClientHints [by @sanchezzzhak] (Closes: #7227)
+  * Add ucban.xyz [by @ericguirbal, @spmedia] (Closes: #1323)
+  * Add hrtonline.xyz [by @ericguirbal, @spmedia] (Closes: #1324)
+  * Add mytraffic.shop, supertraffic.xyz, trafficdrive.club [by
+    @seoMattH, @spmedia] (Closes: #1325)
+  * Add bottraffic329.xyz [by @djprecious, @spmedia] (Closes: #1326)
+  * Add getbottraffic4free.xyz [by @djprecious, @spmedia] (Closes:
+    #1327)
+  * Add goyua.xyz [by @ericguirbal, @spmedia] (Closes: #1328)
+  * Add nanwar.xyz [by @ericguirbal, @spmedia] (Closes: #1329)
+  * Add qtrstar.xyz [by @ericguirbal, @spmedia] (Closes: #1330)
+  * Adds TikTok to social networks [by @sgiehl] (Closes: #83)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 16:29:01 +0100
+
 matomo (4.11.0-1) stable; urgency=high
 
   * Releasing Matomo 4.11.0
