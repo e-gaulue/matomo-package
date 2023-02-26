@@ -1,3 +1,78 @@
+matomo (4.13.1-1) stable; urgency=high
+
+  * Releasing Matomo 4.13.1
+  * Speed up sparklines when larger periods are selected and improve
+    detection of trends as well as fix comparison of dates [by @tsteur]
+    (Closes: #20090)
+  * Don't force using day period for sparkline when comparing to ensure
+    it compares correct periods and is fast [by @tsteur, @sgiehl]
+    (Closes: #20094)
+  * Performance improvements for goals by pages [by @bx80] (Closes:
+    #19974)
+  * Fix Unknown format specifier in translation in Live plugin [by
+    @sgiehl] (Closes: #19928)
+  * Fix PHP8.2 Deprecation Warning on module install [by @sgiehl]
+    (Closes: #20176)
+  * Add countdown redirection to User Invite error page [by @samjf,
+    @bx80] (Closes: #20082)
+  * Updated Nonce and Token exception message [by @AltamashShaikh,
+    @sgiehl] (Closes: #20099)
+  * Retry establishing DB connection if it fails with MySQL Server Has
+    Gone Away [by @tsteur, @sgiehl] (Closes: #20110)
+  * Remove outdated misleading comment [by @danielegobbetti,
+    @justinvelluppillai] (Closes: #20147)
+  * Add new trigger user interaction [by @JaJuMa, @AltamashShaikh]
+    (Closes: #582)
+  * Detect existing brand: Digma, Condor, Samsung, iDroid, BQ, Gigabyte,
+    Santin [by @sanchezzzhak, @sgiehl] (Closes: #7302)
+  * Detect new brands: DEYI, JoySurf, VIVIMAGE, X-Mobile and Detect
+    devices for existing brands: Vivo, Huawei, Sharp, HTC [by
+    @sanchezzzhak, @sgiehl] (Closes: #7304)
+  * Improves detection for Iridium browser [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7307)
+  * Add support for Laravel cache [by @vpominchuk, @sanchezzzhak]
+    (Closes: #7310)
+  * Detect new brands: Kapsys, Sunmax, SSKY, Winstar, XCOM, YELLYOUTH
+    and Detect devices for existing brands [by @sanchezzzhak, @sgiehl]
+    (Closes: #7311)
+  * Improves version detection for iOS, iPadOS and macOS [by
+    @liviuconcioiu, @sanchezzzhak] (Closes: #7312)
+  * Adds detection for Movitel, Moxee, Olax, Olympia, Uniqcell, Yestel,
+    Youin brands and improves detection for Alcatel, Andowl, Archos,
+    AT&T, Bmobile, Cellution, Cricket, Crosscall, Facetel, Huawei, iPro,
+    Kalley, Konrow, LOGIC, Mediacom, Multilaser, neoCore, Nokia,
+    OnePlus, ONN, Positivo, Siragon, TCL, Vivo, Xiaomi, Xtratech, Yezz,
+    Zuum brands [by @liviuconcioiu, @sanchezzzhak] (Closes: #7313)
+  * Detect new brands: Khadas, Youwei and Detect devices for existing
+    brands [by @sanchezzzhak, @sgiehl] (Closes: #7315)
+  * Improving regex rules  for browser versions: Chromium GOST,
+    CoolBrowser, Amigo, Opera Mobile etc. [by @bcaller, @sanchezzzhak]
+    (Closes: #7318)
+  * Adds detection for RedOS [by @liviuconcioiu, @sanchezzzhak] (Closes:
+    #7320)
+  * Improves detection for iPadOS and mobile apps [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7322)
+  * Adds detection for Airpha, Brigmton, Cwowdefu, Entity, Mobile
+    Kingdom, SGIN, Wecool brands and improves detection for Alcatel,
+    Blu, Bmobile, Ceibal, CORN, Cricket, Cyrus, Digit4G, Hammer, Hi,
+    Huawei, Konrow, Kurio, Moxee, MTN, ONN, Philco, Realme, Sky, TCL,
+    True, Vivo, Wolki, Xiaomi, Zuum, ZTE brands and Android TV [by
+    @liviuconcioiu, @sanchezzzhak] (Closes: #7323)
+  * Adds detection for Ruggex, Syco brands and improves detection for
+    Huawei, iPro, Kempler & Strauss, MTC, QUBO, Realme, TCL, TOSCIDO,
+    Verizon, Vivo brands [by @liviuconcioiu, @sanchezzzhak] (Closes:
+    #7324)
+  * Add hugblog.xyz [by @ericguirbal, @spmedia] (Closes: #1335)
+  * Add trade365.org [by @ericguirbal, @spmedia] (Closes: #1336)
+  * Add seo-traffic.xyz [by @Computer-Ron, @spmedia] (Closes: #1337)
+  * Add shoppinglocation.com [by @ericguirbal, @spmedia] (Closes: #1338)
+  * Add judyandsimon.com [by @ericguirbal, @spmedia] (Closes: #1339)
+  * Add residualforlife.com [by @ericguirbal, @spmedia] (Closes: #1340)
+  * Add thegreensociety.net [by @ericguirbal, @spmedia] (Closes: #1341)
+  * Update spammers.txt [by @skquinn, @spmedia] (Closes: #1342)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 17:43:13 +0100
+
 matomo (4.13.0-1) stable; urgency=high
 
   * Releasing Matomo 4.13.0
