@@ -1,3 +1,13 @@
+matomo (4.12.3-1) stable; urgency=high
+
+  * Releasing Matomo 4.12.3
+  * Fix to apply Tag Manager database update when upgrading from 4.12
+    [by @bx80] (Closes: #19905)
+  * Improve alignment in Visits > real-time by hiding parent of period
+    selector [by @peterhashair] (Closes: #19818)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 17:34:50 +0100
+
 matomo (4.12.2-1) stable; urgency=high
 
   * Releasing Matomo 4.12.2
