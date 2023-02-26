@@ -1,3 +1,46 @@
+matomo (4.13.3-1) stable; urgency=high
+
+  * Releasing Matomo 4.13.3
+  * Ensure row evolution works in events when switching secondary
+    dimension [by @sgiehl] (Closes: #20180)
+  * When trying to find a join for segmentation, also look for available
+    ways to join in both directions [by @diosmosis, @sgiehl] (Closes:
+    #20149)
+  * Further PHP 8.2 compatibility improvements [by @bx80, @sgiehl]
+    (Closes: #19343)
+  * Fixed PHP 8.1 deprecated warning for Redis::connect() call [by
+    @jakeh999, @sgiehl] (Closes: #20234)
+  * Keep selected site when returning to the dashboard from Tag Manager
+    [by @sgiehl] (Closes: #20232)
+  * Fixed anchor link issue on the tracking code page of the admin when
+    clicking on MTM [by @sgiehl] (Closes: #20233)
+  * Fix possible notice in VisitorDetails class [by @sgiehl] (Closes:
+    #20256)
+  * Add Snapchat to social networks  [by @sgiehl] (Closes: #20209)
+  * Added link to useful FAQ and RAW data information to Live API
+    reference,  [by @bx80] (Closes: #20207)
+  * Prevent MySQL error has gone away error during tracking [by @tsteur,
+    @sgiehl] (Closes: #20263)
+  * PHP 8.2 deprecation warnings [by @sgiehl] (Closes: #20236)
+  * Readonly text field isn't possible to identify as such [by @sgiehl]
+    (Closes: #20282)
+  * Detect new brands: MwalimuPlus, OLTO, DSIC, Mascom and Detect
+    devices for existing brands Vivo, Xiaomi, Sharp [by @sanchezzzhak,
+    @sgiehl] (Closes: #7330)
+  * Detect new brands: Vormor,  Oangcc, SOSH and Detect devices for
+    existing brands Vivo, Xiaomi, Sharp, ZTE [by @sanchezzzhak, @sgiehl]
+    (Closes: #7334)
+  * Detect mobile apps: Audible, Overcast [by @sanchezzzhak, @sgiehl]
+    (Closes: #7335)
+  * Detect Wolvic VR Browser [by @sanchezzzhak, @sgiehl] (Closes: #7336)
+  * Detect bot: GumGum Verity [by @sanchezzzhak, @sgiehl] (Closes:
+    #7337)
+  * Detect new brands: Everex, GTMEDIA, Guophone, Unitech and Detect
+    devices for existing brands [by @sanchezzzhak, @sgiehl] (Closes:
+    #7339)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 26 Feb 2023 17:47:45 +0100
+
 matomo (4.13.1-1) stable; urgency=high
 
   * Releasing Matomo 4.13.1
