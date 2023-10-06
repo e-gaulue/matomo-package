@@ -1,3 +1,138 @@
+matomo (4.14.1-1) stable; urgency=high
+
+  * Releasing Matomo 4.14.1
+  * Add diagnostics command options to list and delete unexpected files
+    [by @flamisz, @bx80] (Closes: #17399)
+  * Tabbing (tab navigation with keyboard) is not working in Matomo 4.13
+    (regression) [by @diosmosis, @sgiehl] (Closes: #20285)
+  * In accept invitation screen show the email instead of the username
+    [by @sgiehl] (Closes: #20306)
+  * Improve detection of GA3 and GA4 to more accurately suggest correct
+    tracking set up guides [by @tsteur] (Closes: #20380)
+  * Added code to include schedule command for plugins while generating
+    github action [by @AltamashShaikh, @bx80] (Closes: #20410)
+  * Feedback success overlay might not be shown [by @sgiehl] (Closes:
+    #20343)
+  * OptOut: Remove extra twig markings [by @coffeemakr, @sgiehl]
+    (Closes: #20404)
+  * Ensure empty widgets are loaded correctly [by @sgiehl] (Closes:
+    #20430)
+  * Ensure archiving for segments uses correct date ranges [by @sgiehl]
+    (Closes: #20441)
+  * Slightly improve visits log layout as dashboard widget [by @sgiehl,
+    @JackySw] (Closes: #20370)
+  * Adjust some archivers to use correct row limit when aggregating
+    periods [by @sgiehl] (Closes: #20166)
+  * Fix PHP 8.2 deprecations in 2FA plugin [by @sgiehl] (Closes: #20307)
+  * What's new icon "on" doesn't show there is a new entry when never
+    clicked on it previously [by @sgiehl] (Closes: #20312)
+  * Fix for PHP8 type error on NFS diagnostic check [by @bx80] (Closes:
+    #20323)
+  * Fix non-countable fatal error in the datatable class [by @bx80,
+    @sgiehl] (Closes: #20333)
+  * Fix to allow campaign switching during a session [by @bx80, @sgiehl]
+    (Closes: #20336)
+  * Harden check for multiple sites [by @sgiehl] (Closes: #20339)
+  * Fix PHP 8.1 deprecation in DevicesDetection [by @sgiehl] (Closes:
+    #20356)
+  * Ensure to use int values to determine maximum values in graphs [by
+    @sgiehl] (Closes: #20357)
+  * Fix compatibility of minimum PHP version check with older versions
+    [by @bx80, @sgiehl] (Closes: #20358)
+  * Language is not correctly detected automatically by Matomo [by
+    @sgiehl] (Closes: #20374)
+  * Fix visits log might show incorrect action for groups [by @sgiehl]
+    (Closes: #20391)
+  * Fix for unsupported operand error in RowEvolution [by @bx80]
+    (Closes: #20399)
+  * Fixes for PHP 8.2 deprecation warnings [by @bx80] (Closes: #20402)
+  * Fix PHP 8.2 deprecation in event actions [by @sgiehl] (Closes:
+    #20426)
+  * Avoid errors when trying to create invalid date objects [by @sgiehl]
+    (Closes: #20098)
+  * Fix for creating a new segment that has some visits will show 2
+    notifications instead of 1 [by @sgiehl, @bx80] (Closes: #20222)
+  * Make millisecond dimension grouping less error prone [by @snake14,
+    @sgiehl] (Closes: #20262)
+  * Remove unneeded table from query when querying conversions by page
+    view to increase performance [by @tsteur, @bx80] (Closes: #20272)
+  * Trim spaces from login email in password reset process if some are
+    set [by @tsteur, @sgiehl] (Closes: #20296)
+  * Unset link token when accepting an invite [by @tsteur, @bx80]
+    (Closes: #20298)
+  * Fix Matomo dialog does not close [by @tsteur, @bx80] (Closes:
+    #20303)
+  * Delete log table data in chunks to prevent possible performance
+    issues [by @tsteur] (Closes: #20424)
+  * Add new metricTypes report metadata to prepare for LookerStudio
+    integration [by @diosmosis, @sgiehl] (Closes: #20425)
+  * Updated bug report template: moved Context to the top [by @Stan-vw,
+    @bx80] (Closes: #20429)
+  * Fixed PHP 8.2 deprecation error in CustomDimensions [by @snake14,
+    @sgiehl] (Closes: #20437)
+  * Get all numerics in one go for faster goal conversion calculation
+    [by @tsteur, @sgiehl] (Closes: #20438)
+  * Added new semantic types for date/datetime for CrashAnalytics [by
+    @diosmosis, @sgiehl] (Closes: #20471)
+  * Replace Travis.CI tests with GitHub action [by @peterhashair,
+    @snake14] (Closes: #386)
+  * Improvements to MTM tracker to allow full _paq functionality [by
+    @snake14] (Closes: #594)
+  * Improve JavaScript reliability [by @snake14] (Closes: #599)
+  * Added code to create default container for idsite:1 if not created
+    [by @AltamashShaikh] (Closes: #606)
+  * Images and text updated for tags [by @AltamashShaikh, @snake14]
+    (Closes: #607)
+  * Detect devices for exists brands: LG, Energy Sistem, SmartBook,
+    Arnova [by @sanchezzzhak, @sgiehl] (Closes: #7344)
+  * Detect new brand BMXC and Detect devices for exist brands [by
+    @sanchezzzhak, @sgiehl] (Closes: #7345)
+  * Detect new brands: V-Gen, Nedaphone and Detect devices for exist
+    brands  [by @sanchezzzhak, @sgiehl] (Closes: #7346)
+  * Detect new brands: Frunsi, RelNAT, TeloSystems, MIWANG and Detect
+    devices for exist brands [by @sanchezzzhak, @sgiehl] (Closes: #7348)
+  * Detect new brands: HeadWolf, Great Asia, Zamolxe, ZoomSmart and
+    Detect devices for exist brands  [by @sanchezzzhak, @sgiehl]
+    (Closes: #7349)
+  * Fix possible error if an incorrect version list array is provided
+    [by @sgiehl] (Closes: #7350)
+  * Detect new brands: PC Smart, Ephone, YunSong, SYH, iRobot and Detect
+    devices for exist brands [by @sanchezzzhak, @sgiehl] (Closes: #7353)
+  * Overwrite device type  smartphone - if UA contains a'prefix,
+    Pad/APad [by @sanchezzzhak, @sgiehl] (Closes: #7354)
+  * Detect new brands: Roam Cat, DIMO, Everest, SANY and Detect devices
+    for exist brands  [by @sanchezzzhak, @sgiehl] (Closes: #7355)
+  * Detect new brands: Attila, BRAVE and Detect devices for exist brands
+    [by @sanchezzzhak, @sgiehl] (Closes: #7357)
+  * Detect new brands: BenWee, BluSlate, Bookeen, Lectrus, LeBest, NOVO,
+    Pano, Surge, Volt and Detect devices for exist brands [by
+    @sanchezzzhak, @sgiehl] (Closes: #7359)
+  * Adds detection for various bots and apps [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7360)
+  * Detect new brands: FFF SmartLife, NuVision, Versus and Detect
+    devices for exist brands  [by @sanchezzzhak, @sgiehl] (Closes:
+    #7362)
+  * Detect Morning Score bot [by @sanchezzzhak, @sgiehl] (Closes: #7364)
+  * Fir for YamlParser AppHints & BrowserHints [by @sanchezzzhak]
+    (Closes: #7365)
+  * Detect browsers: YandexBrowser, AlohaBrowser for iOS and Detect
+    apps: Quora, JJ2GO, BonPrix  [by @sanchezzzhak, @sgiehl] (Closes:
+    #7366)
+  * Fix: YamlParser for AppHints & BrowserHints [by @sanchezzzhak,
+    @sgiehl] (Closes: #7367)
+  * Detect devices for exist brands: POCO, OPPO, Ravoz, Vivo, Samsung,
+    Huawei, Nubia, OnePlus, Oukitel, Xiaomi [by @sanchezzzhak, @sgiehl]
+    (Closes: #7373)
+  * Add function to set api url [by @Vmadmax, @sgiehl] (Closes: #113)
+  * Use bash syntax for installation instructions [by @michalkleiner,
+    @sgiehl] (Closes: #22)
+  * Add nutriwestncahi.com [by @ericguirbal, @spmedia] (Closes: #1343)
+  * Add epcpolo.com [by @ericguirbal, @spmedia] (Closes: #1344)
+  * Add 100+ .xyz domains [by @kevin-wellinger, @spmedia] (Closes:
+    #1345)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 30 Sep 2023 11:05:33 +0200
+
 matomo (4.13.3-1) stable; urgency=high
 
   * Releasing Matomo 4.13.3
