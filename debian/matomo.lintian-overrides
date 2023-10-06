@@ -86,6 +86,7 @@ matomo: extra-license-file usr/share/matomo/vendor/symfony/polyfill-iconv/LICENS
 matomo: extra-license-file usr/share/matomo/vendor/lox/xhprof/LICENSE
 
 # That is the aim of Matomo to provide an opensource tracker alternative to Google or others
+matomo: privacy-breach-piwik usr/share/matomo/plugins/TagManager/Template/Tag/MatomoTag.web.js (choke on: 'settrackerurl')
 matomo: privacy-breach-piwik usr/share/matomo/js/piwik.js (choke on: 'settrackerurl')
 matomo: privacy-breach-piwik usr/share/matomo/js/piwik.min.js (choke on: "settrackerurl")
 matomo: privacy-breach-piwik usr/share/matomo/matomo.js (choke on: "settrackerurl")
