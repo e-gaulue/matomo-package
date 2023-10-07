@@ -1,3 +1,54 @@
+matomo (4.15.0-1) stable; urgency=high
+
+  * Releasing Matomo 4.15.0
+  * Correctly escape report name in CSV exports [by @sgiehl] (Closes:
+    #20785)
+  * Submit Matomo to Google Tag Manager Community Template Galleries
+    (Closes: #12165)
+  * Single click copy button for code snippets [by @bx80, @sgiehl]
+    (Closes: #20915)
+  * [PHP 8.1 compatibility] Fix array access warning on float -
+    /plugins/Goals/DataTable/Filter/CalculateConversionPageRate.php
+    (Closes: #20636)
+  * [PHP 8.1 compatibility] IPUtils.php(27): Deprecated - trim():
+    Passing null to parameter #1 ($string) of type string  [by @sgiehl]
+    (Closes: #20658)
+  * Allow goals processed metrics to appear in API.getProcessedReport
+    output [by @diosmosis, @sgiehl] (Closes: #20589)
+  * Added GTM installation guide in no-data and tracking code pages  [by
+    @AltamashShaikh, @sgiehl] (Closes: #20606)
+  * Added WordPress installation guide for no-data and tracking code
+    pages [by @AltamashShaikh, @bx80] (Closes: #20649)
+  * Fixed two issues with handling of processing dependent archives [by
+    @diosmosis, @sgiehl] (Closes: #20679)
+  * Don't show empty categories in widget listing [by @diosmosis,
+    @sgiehl] (Closes: #20681)
+  * Allow reports to override the min/max label width values [by
+    @diosmosis, @michalkleiner] (Closes: #20682)
+  * add Live.initializeVisitorActions event to allow plugins to collapse
+    actions in visitor log if they need to [by @diosmosis, @sgiehl]
+    (Closes: #20683)
+  * Improves UI/UX on no data screen [by @AltamashShaikh, @bx80]
+    (Closes: #20700)
+  * Update Google Tag Manager instructions on no data screen [by
+    @michalkleiner, @sgiehl] (Closes: #20710)
+  * Improved WordPress instruction tab on the no data screen [by
+    @AltamashShaikh, @sgiehl] (Closes: #20748)
+  * Adds Vue.js instruction tab on no data screen [by @AltamashShaikh,
+    @sgiehl] (Closes: #20790)
+  * Allow reports to specify a column/metadata other than "label" that
+    uniquely identifies a row [by @diosmosis, @sgiehl] (Closes: #20815)
+  * Improvements to notifications under tracking code on no data screen
+    [by @AltamashShaikh, @bx80] (Closes: #20862)
+  * Improve handling of deactivating incompatible plugins during update
+    [by @sgiehl] (Closes: #20882)
+  * Add instruction tab for React.js to no data screen & improve JS code
+    instruction tab [by @AltamashShaikh, @sgiehl] (Closes: #20890)
+  * Adds new SPA/PWA instruction tab for no data screen  [by
+    @AltamashShaikh, @sgiehl] (Closes: #20928)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 07 Oct 2023 11:12:32 +0200
+
 matomo (4.14.2-1) stable; urgency=high
 
   * Releasing Matomo 4.14.2
