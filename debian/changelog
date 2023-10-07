@@ -1,3 +1,15 @@
+matomo (4.15.1-1) stable; urgency=high
+
+  * Releasing Matomo 4.15.1
+  * There are unnecessary extra spaces in the generated campaign builder
+    URL [by @bx80] (Closes: #21039)
+  * Fix tag cloud visualization failing on formatted values [by @sgiehl]
+    (Closes: #21007)
+  * Some advanced options in tracking code generator do no longer work
+    [by @sgiehl] (Closes: #21063)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 07 Oct 2023 11:16:45 +0200
+
 matomo (4.15.0-1) stable; urgency=high
 
   * Releasing Matomo 4.15.0
