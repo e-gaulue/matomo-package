@@ -1,3 +1,58 @@
+matomo (4.14.2-1) stable; urgency=high
+
+  * Releasing Matomo 4.14.2
+  * Added site detection for cloudflare and updated noData page to
+    mention cloudflare [by @AltamashShaikh, @sgiehl] (Closes: #20573)
+  * Improve brute force protection checks (#20543) [by @sgiehl] (Closes:
+    #20579)
+  * Faster archiving for non-day periods by only storing one datatable
+    and blob row at a time in memory [by @tsteur, @sgiehl] (Closes:
+    #20512)
+  * Improve archiving performance by loading cached actions from a
+    database reader when using a multi-server database environment [by
+    @tsteur, @sgiehl] (Closes: #20594)
+  * Reverting Tag Manager JavaScript Change that caused fewer visits to
+    be tracked when both Tag Manager and JavaScript trackers were used
+    together [by @snake14] (Closes: #620)
+  * Fixed regression of container to set conditionally only if not
+    present [by @AltamashShaikh] (Closes: #614)
+  * Update README.md [by @github-actions[bot], @sgiehl] (Closes: #7379)
+  * Detect new brands: Kinstone, ROiK and Detect device for exist
+    brands: Samsung, Huawai, DEXP, TCL, Xiaomi [by @sanchezzzhak,
+    @sgiehl] (Closes: #7380)
+  * Detect new brand HIPER and Detect devices for exits brands: Samsung,
+    Xiaomi, BBK, SUNWIND, Stylo [by @sanchezzzhak, @sgiehl] (Closes:
+    #7382)
+  * Detect new brands: GOODTEL, Viper, VIIPOO, Vityaz, Samtron and
+    Detect devices for exist brands: Huawei, ZTE, Doogee, Realme. OPPO
+    [by @sanchezzzhak, @sgiehl] (Closes: #7383)
+  * Detect new brands: ANXONIT, Ctroniq, Punos, TopDevice and Detect
+    devices for exist brands: OPPO, POCO, Pico, Tecno Mobile, DEXP [by
+    @sanchezzzhak, @sgiehl] (Closes: #7384)
+  * Adds detection for Wavebox browser [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7385)
+  * Detect browsers: IVVI Browser, NOMone VR Browser, Opus Browser,
+    Soundy Browser [by @sanchezzzhak, @sgiehl] (Closes: #7387)
+  * Detect new brands: RedLine, HAOQIN, XY Auto and Detect devices for
+    exist brands: Tecno Mobile, Vsmart, Itel, Samsung [by @sanchezzzhak,
+    @sgiehl] (Closes: #7388)
+  * Detect new brands: RedLine, HAOQIN, XY Auto and Detect devices for
+    exist brands: Tecno Mobile, Vsmart, Itel, Samsung [by @sanchezzzhak,
+    @sgiehl] (Closes: #7388)
+  * add support for CURLOPT_CONNECTTIMEOUT [by @vpapaloukas, @sgiehl]
+    (Closes: #115)
+  * Documenting new Safari limitations on setting first party cookies
+    from a subdomain [by @mattab, @tsteur] (Closes: #81)
+  * Add emicef.com [by @ericguirbal, @spmedia] (Closes: #1347)
+  * Add singularwebs.net [by @ericguirbal, @spmedia] (Closes: #1348)
+  * Add tourburlington.com [by @ajyoon, @spmedia] (Closes: #1349)
+  * Add nfocusdriver.com [by @ericguirbal, @spmedia] (Closes: #1350)
+  * Add www.chomexun.com [by @ajyoon, @spmedia] (Closes: #1351)
+  * Add chomexun.com [by @ericguirbal, @spmedia] (Closes: #1352)
+  * Add madisonclothingny.com [by @ajyoon, @spmedia] (Closes: #1353)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 07 Oct 2023 11:02:48 +0200
+
 matomo (4.14.1-1) stable; urgency=high
 
   * Releasing Matomo 4.14.1
