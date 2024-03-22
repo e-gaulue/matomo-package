@@ -196,7 +196,7 @@ fixperms:
 # check lintian licenses so we can remove obsolete ones
 checklintianlic:
 	@echo " [DEB] Checking extra license files presence"
-	@for F in $(shell cat debian/matomo.lintian-overrides | grep extra-license-file | awk '{print $$3}') ; do \
+	@for F in $(shell cat debian/matomo.lintian-overrides | grep extra-license-file | awk '{print $$3}' | tr -d "[]") ; do \
 		echo -n "  * checking: $$F"; \
 		if [ ! -f "$(DESTDIR)/$$F" ]; then \
 			echo " $(RED)missing$(NC)."; \
@@ -209,7 +209,7 @@ checklintianlic:
 # check lintian licenses so we can remove obsolete ones
 checklintianextralibs:
 	@echo " [DEB] Checking for extra libs presence"
-	@for F in $(shell cat debian/matomo.lintian-overrides | grep -e embedded-javascript-library -e embedded-php-library | awk '{print $$3}') ; do \
+	@for F in $(shell cat debian/matomo.lintian-overrides | grep -e embedded-javascript-library -e embedded-php-library | awk '{print $$NF}' | tr -d "[]") ; do \
 		echo -n "  * checking: $$F"; \
 		if [ ! -f "$(DESTDIR)/$$F" ]; then \
 			echo " $(RED)missing$(NC)."; \
