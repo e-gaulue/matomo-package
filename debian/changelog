@@ -1,3 +1,36 @@
+matomo (4.16.0-2) stable; urgency=high
+
+  * Change lintian overrides since we are now using Bookworm to build
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Fri, 22 Mar 2024 11:13:56 +0100
+
+matomo (4.16.0-1) stable; urgency=high
+
+  * Releasing Matomo 4.16.0
+  * Segment with 'Does not contain' operand is invalid if comma is in
+    value [by @mneudert] (Closes: #19617)
+  * [PHP 8.1 compatibility] Deprecated - trim(): Passing null to
+    parameter #1 ($string) of type string [by @sgiehl] (Closes: #20959)
+  * Fix for unexpected zero value last edit dates in segment archiving
+    [by @bx80, @sgiehl] (Closes: #21190)
+  * Archiving issue in DataTable.php: Deprecated - Implicit conversion
+    from float 2009.999 to int loses precision (Closes: #21357)
+  * Fix "revenue per visit" calculation [by @mneudert] (Closes: #21569)
+  * Row evolution does not work for reports with special labels [by
+    @snake14, @sgiehl] (Closes: #21234)
+  * Process general goal metrics if no conversions, but site is
+    ecommerce enabled [by @diosmosis, @sgiehl] (Closes: #21266)
+  * Add markup and content for premium plugins promos [by
+    @michalkleiner] (Closes: #21403)
+  * Escape underscore in archive name when used in like query [by
+    @sgiehl] (Closes: #21504)
+  * Add more visually striking marketplace menu item in sidebar [by
+    @michalkleiner] (Closes: #21512)
+  * Fixing PHP 8.3 deprecation error [by @snake14, @bx80] (Closes:
+    #21522)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Fri, 22 Mar 2024 11:11:02 +0100
+
 matomo (4.15.1-1) stable; urgency=high
 
   * Releasing Matomo 4.15.1
