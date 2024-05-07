@@ -1,0 +1,6 @@
+[Unit]
+Description=Matomo Auto-Archiving
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/php /path/to/matomo/console core:archive --url=https://example.com/matomo/

@@ -190,6 +190,10 @@ fixperms:
 #		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/szymach/c-pchart/coverage.sh
 #		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/twig/twig/drupal_test.sh
 #		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/wikimedia/less.php/bin/lessc
+#		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/symfony/error-handler/Resources/bin/extract-tentative-return-types.php
+#		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/symfony/error-handler/Resources/bin/patch-type-declarations
+#		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/symfony/var-dumper/Resources/bin/var-dump-server
+
 
 		@echo "done."
 

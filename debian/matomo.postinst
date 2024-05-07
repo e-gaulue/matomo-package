@@ -2,6 +2,12 @@
 
 set -e
 
+
+# Check if the first argument is "abort-upgrade"
+if [ "$1" = "abort-upgrade" ]; then
+    exit 0
+fi
+
 # Source debconf library.
 . /usr/share/debconf/confmodule
 db_version 2.0 || { echo "$0: needs DebConf 2.0 or later"; exit 1; }
@@ -85,7 +91,7 @@ then
 fi
 
 echo "  * Matomo main configuration files are stored in /etc/matomo/"
-echo "  * Matomo crontab file is stored in /etc/cron.d/matomo-archive"
+echo "  * Matomo crontab file is stored in /etc/cron.d/matomo-archive (review it if 1rst install)"
 echo "  * When installing/using matomo, make sure you disable any ads blocker"
 
 if [ -e "/usr/share/matomo/config/config.ini.php" ]; then
@@ -118,6 +124,14 @@ if [ ! -e "/usr/share/matomo/config/config.ini.php" ]; then
 	echo "  * Go to /etc/matomo and finish Apache or NGINX configuration."
 	echo "    Then visit this matomo site you have just set to finish the installation."
 fi
+
+echo "  * Matomo comes with systemd files as recommanded by Debian for handling automatic archives, but crontab stay the prefered"
+echo "    way to handle it. /usr/lib/systemd/system/matomo.service need to be reviewed by you as for /etc/cron.d/matomo-archive."
+echo "    If prefered than crontab, you have then to launch it and make it permanent with:"
+echo "       sudo systemctl start matomo.timer"
+echo "       sudo systemctl enable matomo.timer"
+echo "    And delete/comment your previous /etc/cron.d/matomo-archive"
+echo "    For more information read https://matomo.org/faq/how-to/how-do-i-setup-auto-archiving-script-to-run-using-systemd-on-a-linux-system-instead-of-cron/"
 
 #DEBHELPER#
 

@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+. /usr/share/debconf/confmodule
+
 # Before installing Matomo (ie: not an 'upgrade', we check if Piwik is already present
 # and if it is, we move its configuration folder in a safe location (/etc/piwik.orid "/etc/piwik.orig
 # this will allow Matomo to deploy correctly
@@ -26,5 +28,45 @@ then
 		done
 	fi
 fi
+
+
+# Check if dpkg is providing an old version number
+if [ "$1" = "upgrade" ]; then
+
+    # Compare the version if the previous version is less than 5
+    set +e
+    dpkg --compare-versions "$2" lt "5"
+    comparison_result=$?
+    set -e
+
+    if [ $comparison_result -eq 0 ]; then
+
+	# Check if /var/lib/dpkg/info/matomo.postinst exists and if it already manage abort-upgrade
+	if [ -f "/var/lib/dpkg/info/matomo.postinst" ] && ! grep -q "Check if the first argument is \"abort-upgrade\"" /var/lib/dpkg/info/matomo.postinst; then
+    	    cp -a -f /var/lib/dpkg/info/matomo.postinst /var/lib/dpkg/info/matomo.postinst-orig
+	    sed -i '/^set -e$/a \
+\
+# Check if the first argument is "abort-upgrade"\
+if [ "$1" = "abort-upgrade" ]; then\
+    exit 0\
+fi' /var/lib/dpkg/info/matomo.postinst
+	fi
+
+	# Define the Debconf question key
+	QUESTION="matomo/upgrade_warning"
+
+	db_fset ${QUESTION} seen false
+	db_input high ${QUESTION} || true
+	db_go
+	# Read user's response
+	db_get ${QUESTION}
+
+        if [ "$RET" != "true" ]; then
+            echo "Your installation is unchanged."
+            exit 1
+        fi
+    fi
+fi
+
 
 #DEBHELPER#

@@ -43,3 +43,13 @@ _Description: Enable automatic database upgrade for your Matomo (Piwik) installa
  You may change the previously selected behaviour using the following debian
  command: dpk-reconfigure matomo
 
+Template: matomo/upgrade_warning
+Type: boolean
+Default: false
+Description: Proceed to this Major Upgrade?
+ CAUTION: The previous version of this package was less than 5.
+ Matomo v5 is considered a major version upgrade by its development team. It comes with a lot of database changes.
+ Be sure you have a database backup before proceeding and that you know how to restore it in case of trouble.
+ The database upgrade process is handled by PHP. You may have to investigate and restart the process if it fails.
+ It's launched with this command: php /usr/share/matomo/console core:update .
+
