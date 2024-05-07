@@ -1,3 +1,380 @@
+matomo (5.0.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.0.0
+  * Use HTTPS by default for connections to matomo.org (with working
+    fallback to HTTP requiring super user edit the INI config) [by
+    @peterhashair, @bx80] (Closes: #19081)
+  * Remove JSON2 API [by @sgiehl] (Closes: #16028)
+  * Matomo tracker select queries can get slow when most visits have
+    same visitorId (Performance) [by @peterhashair] (Closes: #16904)
+  * Improve page conversion attribution performance with pre-calculated
+    field (Performance) [by @bx80] (Closes: #20375)
+  * Improve speed of segment queries when multiple action segment parts
+    are used (Performance)[by @diosmosis] (Closes: #19897)
+  * When aggregating data tables for a week, month, year or range
+    period, don't store all archive content in memory (Performance) [by
+    @diosmosis] (Closes: #18295)
+  * Avoid API request for API.getPagesComparisonsDisabledFor on Login
+    pages [by @sgiehl, @bx80] (Closes: #20578)
+  * Allow API parameter type hints [by @sgiehl] (Closes: #19984)
+  * Encapsulate plugins from using Matomo dependencies directly by
+    introducing vendor proxy patterns [by @sgiehl] (Closes: #20596)
+  * Deprecate auto sanitize of API parameters & Common::getRequestVar
+    and introduce Request class [by @sgiehl] (Closes: #19624)
+  * If "disableBrowserFeatureDetection" is enabled and
+    remember(Cookie)ConsentGiven is called, a new visitor is recognized
+    [by @peterhashair, @sgiehl] (Closes: #19279)
+  * Matomo can be tricked to record spoofed X-Forwarded-For IPs (Closes:
+    #17202)
+  * Add privacy & security features to only allow adding users with
+    emails from specific domains [by @tsteur] (Closes: #20101)
+  * URL overflows in goal conversions widget [by @sgiehl] (Closes:
+    #20772)
+  * Improve handling of regex groups in CustomDimension extraction [by
+    @9joshua] (Closes: #16141)
+  * Set default limit for concurrent archivers (Closes: #18375)
+  * Enable search on Visitors Software Configurations report [by
+    @sgiehl] (Closes: #19840)
+  * Deprecate Do-Not-Track Support [by @sgiehl] (Closes: #20011)
+  * Enable segmented visits log feature for product reports [by @sgiehl]
+    (Closes: #20153)
+  * Mention new consent guides in Matomo "Asking for consent" page [by
+    @sgiehl] (Closes: #20158)
+  * Add ability to limit no of rows in
+    FieldConfig::UI_CONTROL_MULTI_TUPLE [by @sgiehl] (Closes: #20352)
+  * Enable segmented log feature for social network reports [by @sgiehl]
+    (Closes: #20482)
+  * Warning: Undefined array key "method" in PrivacyManager.php [by
+    @michalkleiner] (Closes: #20651)
+  * Enhance console command plugin:list with version information [by
+    @ziegenberg, @sgiehl] (Closes: #20717)
+  * Use the correct submit button text when editing/adding a scheduled
+    report [by @diosmosis, @sgiehl] (Closes: #20132)
+  * Ensure to unsanitize goal pattern correctly [by @sgiehl, @bx80]
+    (Closes: #20495)
+  * Clicking "no" in users manager when changing permission doesn't
+    reset the role setting [by @sgiehl] (Closes: #20531)
+  * More then 20 actions bleed over from widgets [by @michalkleiner]
+    (Closes: #20622)
+  * Add new website modal buttons are squashed together [by @sgiehl]
+    (Closes: #20020)
+  * User-ID String in real time widget might overflow [by @sgiehl]
+    (Closes: #20072)
+  * Use matomo brand in less color names [by @sgiehl] (Closes: #20693)
+  * Invite new user screen says "Add new user" [by @bx80] (Closes:
+    #20169)
+  * Keep MaterializeCSS up to date [by @sgiehl] (Closes: #16368)
+  * Restrict plugin name to 60 characters [by @peterhashair] (Closes:
+    #18727)
+  * Updating visit dimensions might not work correctly in some cases [by
+    @bx80] (Closes: #19316)
+  * Performance report not working from pages report when segment is in
+    use [by @sgiehl] (Closes: #20030)
+  * Make Matomo compatible with passwords containing certain special
+    characters [by @sgiehl] (Closes: #20048)
+  * Invalid data sent in uadata array, causes complete tracking failure
+    in Queued Tracking [by @sgiehl] (Closes: #20361)
+  * Add `referrerpolicy="no-referrer-when-downgrade"` to noscript
+    tracking code [by @bx80] (Closes: #20409)
+  * Support ranges with two dates for invalidateArchivedReports API call
+    [by @bx80] (Closes: #20413)
+  * Delete annotation feature is not translatable [by @bx80] (Closes:
+    #20484)
+  * Test button in segment editor might throw an error [by @sgiehl]
+    (Closes: #20532)
+  * Fix error message when UI asset can't be written [by @sgiehl]
+    (Closes: #20560)
+  * If custom logo feature is disabled, assume it's not enabled even if
+    one is already uploaded [by @tsteur, @sgiehl] (Closes: #20621)
+  * [PHP 8.2 compatibility] WARNING: Deprecated - Creation of dynamic
+    property [by @sgiehl] (Closes: #20562)
+  * [PHP 8.1 compatibility] Improve type checking for Transitions API
+    method getTransitionsForAction [by @bx80, @sgiehl] (Closes: #20599)
+  * [PHP 8.1 compatibility] Fix array access warning on float -
+    /plugins/Goals/DataTable/Filter/CalculateConversionPageRate.php
+    (Closes: #20636)
+  * [PHP 8.1 compatibility] deprecation warning - Return type of
+    RequiredPhpSetting::jsonSerialize (Closes: #20627)
+  * core:purge-old-archive-data optimizes all tables twice [by @bx80]
+    (Closes: #20692)
+  * Movers and Shakers shows Search Engine name escaped [by @sgiehl]
+    (Closes: #20773)
+  * Make missing parts of PrivacyManager translatable [by @sgiehl,
+    @bx80] (Closes: #20330)
+  * JS tracker should not track anything when the protocol is file:// to
+    avoid tracking personal data by accident [by @peterhashair] (Closes:
+    #17017)
+  * Updates Symfony components to 5.4.x [by @sgiehl] (Closes: #18328)
+  * [Vue] add support for on demand loading of plugin UMD files when a
+    component in a plugin is first used. [by @diosmosis, @sgiehl]
+    (Closes: #18980)
+  * [Vue] remove angularjs libraries from matomo [by @diosmosis,
+    @sgiehl] (Closes: #19502)
+  * Do not accept invalid SSL certificates for requests to ASPSMS and
+    Clockwork [by @sgiehl, @bx80] (Closes: #19594)
+  * Rename javascript event piwikPageChange to matomoPageChange [by
+    @sgiehl] (Closes: #19710)
+  * Return status code 401 for invalid tokens in API requests [by
+    @peterhashair, @sgiehl] (Closes: #19813)
+  * Add spellcheck=false to password inputs [by @sgiehl] (Closes:
+    #19824)
+  * add convenience command to minify tracker JS during development [by
+    @diosmosis, @sgiehl] (Closes: #19830)
+  * add multiFilter utility method to DataTable classes [by @diosmosis,
+    @sgiehl] (Closes: #19902)
+  * Update jQuery to 3.6.3 [by @sgiehl] (Closes: #19989)
+  * Allow reports to specify a column/metadata other than "label" that
+    uniquely identifies a row [by @diosmosis, @sgiehl] (Closes: #20009)
+  * Limit allowed characters for instance ids [by @AltamashShaikh,
+    @sgiehl] (Closes: #20029)
+  * Prevent error in OptOutManager when language is not a string [by
+    @tsteur, @bx80] (Closes: #20074)
+  * Attach browser features to tracking requests when they are send [by
+    @sgiehl] (Closes: #20096)
+  * Speed up fetching range reports, evolution and sparkline reports [by
+    @tsteur, @sgiehl] (Closes: #20121)
+  * SegmentEditor might fail to display suggestions when using PDO\MYSQL
+    [by @diosmosis, @sgiehl] (Closes: #20556)
+  * Removes deprecated javascript methods broadcast.init,
+    broadcast.propagateAjax and broadcast.pageLoad [by @sgiehl] (Closes:
+    #20610)
+  * Allow reports to override the min/max label width values [by
+    @diosmosis, @sgiehl] (Closes: #20643)
+  * Provide json output of console command `plugin:list` [by
+    @ziegenberg, @michalkleiner, @sgiehl] (Closes: #20744)
+  * Regions might not be detected correctly when using free DBIP
+    geolocation database [by @sgiehl] (Closes: #20527)
+  * [PHP 8.1 compatibility] Deprecated - preg_split(): Passing null to
+    parameter #2 ($subject) of type string is deprecated in
+    Draw.php(2302) [by @sgiehl] (Closes: #20655)
+  * The colour highlight for the bounce trend in the Visit Summary
+    should be reversed [by @sgiehl] (Closes: #20788)
+  * introduce RecordBuilder concept to split up Archiver code [by
+    @diosmosis, @sgiehl] (Closes: #20394)
+  * Fix syntax of JSDoc annotations `@param`/`@returns` to enable type
+    hinting in IDE [by @rr-it, @sgiehl] (Closes: #20742)
+  * Configure linguist to exclude libs, generated and resource files [by
+    @rr-it, @sgiehl] (Closes: #20813)
+  * allow running JS tests for a single plugin in tests:run-js [by
+    @diosmosis, @sgiehl] (Closes: #20816)
+  * [PHP 8.2 compatibility] WARNING: Deprecated - Creation of dynamic
+    property [by @sgiehl] (Closes: #20845)
+  * Add methods to allow creating internationalized listings [by
+    @sgiehl] (Closes: #20818)
+  * Updating multiple plugins in UI doesn't work [by @sgiehl] (Closes:
+    #20846)
+  * When requesting Date Range or Custom Segment, only archive the
+    requested record [by @bx80, @diosmosis] (Closes: #7573)
+  * Handle ajax call to resend an invitation correctly [by @sgiehl]
+    (Closes: #21013)
+  * Allow one to optionally defer JS from custom layout templates [by
+    @michalkleiner, @sgiehl] (Closes: #20809)
+  * Remove "ALL WEBSITES" from the website selection dropdown (Closes:
+    #20492)
+  * Add a new link to a Reviews website [by @sgiehl] (Closes: #20519)
+  * Add single click copy button for code snippets [by @bx80] (Closes:
+    #20607)
+  * Create accessible hyperlinks [by @sgiehl] (Closes: #20706)
+  * Matomo leaks the IP address of the backend user to
+    plugins.matomo.org [by @bx80] (Closes: #20713)
+  * In the Diagnostics plugin (core) add a helpful link to Packet Too
+    Large for max_allowed_packet [by @bx80] (Closes: #20970)
+  * Added "keywords" to the default search keyword parameters [by
+    @Toflar, @sgiehl] (Closes: #21034)
+  * When installing Piwik, the port is not correctly saved for
+    trusted_hosts [by @sgiehl] (Closes: #9549)
+  * Thousand numbers are wrongly displayed in email reports (Closes:
+    #17747)
+  * Unable to delete entry containing dots with config:delete command
+    (Closes: #19966)
+  * Widget "Become a Matomo expert" does not work right (Add user) [by
+    @sgiehl] (Closes: #20569)
+  * UX: Search bar javascript issue [by @sgiehl] (Closes: #20640)
+  * When adding a website, it adds it twice instead of once [by @sgiehl]
+    (Closes: #20838)
+  * Width of table on Goals Overview page is not correct (Closes:
+    #20861)
+  * Row labels disappear on double click in table report (Closes:
+    #20894)
+  * [PHP 8.1 compatibility] Deprecated - trim(): Passing null to
+    parameter #1 ($string) of type string [by @sgiehl] (Closes: #20959)
+  * Fix tag cloud visualization failing on formatted values [by @bx80,
+    @sgiehl] (Closes: #21001)
+  * Add new user: password manager might change new users username [by
+    @sgiehl] (Closes: #21023)
+  * Transition window: text overflow [by @sgiehl] (Closes: #21048)
+  * Tracking Error "Data too long for column 'config_device_model'" [by
+    @sgiehl] (Closes: #21061)
+  * add actions goal metrics to processed reports in metadata and report
+    data [by @diosmosis, @sgiehl] (Closes: #20817)
+  * Improve handling of incompatible plugins during an update [by
+    @sgiehl] (Closes: #20868)
+  * No-data translations for Vue.js, Cloudflare and WordPress [by
+    @michalkleiner, @sgiehl] (Closes: #20880)
+  * Validate lastMinutes value for Live.getCounters API [by @sgiehl]
+    (Closes: #20904)
+  * Changes to show SPA/PWA tab for no data screen [by @AltamashShaikh,
+    @sgiehl] (Closes: #20910)
+  * Fixing Order metric so that the plural name is used correctly [by
+    @snake14, @sgiehl] (Closes: #20917)
+  * Introduce stylelint to lint css / less files [by @sgiehl] (Closes:
+    #20926)
+  * No data page might show selected comparisons [by @sgiehl] (Closes:
+    #20957)
+  * Language selection in Updater no longer works (Closes: #20960)
+  * File integrity overlay looks ugly on update screen (Closes: #20961)
+  * Reset password link might be incorrect when using additional login
+    plugins [by @AltamashShaikh, @sgiehl] (Closes: #21017)
+  * Improvements to Others tab on "no data" screen [by @AltamashShaikh,
+    @sgiehl] (Closes: #21081)
+  * Remove jquery.browser plugin [by @sgiehl] (Closes: #21085)
+  * Mark jQueryUI as deprecated [by @sgiehl, @michalkleiner] (Closes:
+    #21089)
+  * Accessible designs for notifications & inline messages (Closes:
+    #20691)
+  * Page evolution chart URLs incorrect when choosing "Display a table
+    with Goal metrics" [by @sgiehl] (Closes: #21117)
+  * [PHP 8.3 compatibility] WARNING: Deprecated - Calling get_class()
+    without arguments [by @sgiehl] (Closes: #21141)
+  * Redesign accept invitation screen [by @AltamashShaikh, @sgiehl]
+    (Closes: #20924)
+  * Matomo tracking beacon not recording mtm_campaign, mtm_keyword (and
+    others) [by @sgiehl] (Closes: #21091)
+  * Make API method VisitFrequency.get working with multiple sites [by
+    @sgiehl] (Closes: #21132)
+  * Fix inconsistencies across dropdown elements [by @bx80, @sgiehl]
+    (Closes: #20475)
+  * useEventValueAsRevenue still ticked after switching goal type [by
+    @sgiehl] (Closes: #17500)
+  * Occasional Error message when Visitor Log is deactivate (regression)
+    [by @sgiehl] (Closes: #20948)
+  * Too long city names might overlap in visitor profile [by
+    @ARSHIL1804] (Closes: #20963)
+  * Evolution graph in acquisitions overview not showing data [by
+    @sgiehl] (Closes: #21051)
+  * I can't become a "Matomo expert" because it fails to detect my added
+    website [by @caddoo] (Closes: #21134)
+  * User ID segment is available when visitor profile is disabled [by
+    @sgiehl] (Closes: #21137)
+  * [PHP 8.3 compatibility] WARNING: Deprecated - Calling get_class()
+    without arguments [by @sgiehl] (Closes: #21141)
+  * Fix for unexpected zero value last edit dates in segment archiving
+    [by @bx80, @sgiehl] (Closes: #21189)
+  * Fix for 'Label column not found in the table' error in archiving [by
+    @bx80, @sgiehl] (Closes: #21203)
+  * Top control drown down elements might be overlapped by table headers
+    [by @sgiehl] (Closes: #21228)
+  * Create new Vue component for testing tracking code installation [by
+    @snake14, @sgiehl] (Closes: #21148)
+  * Schedule reports UI shows wrong action button labels (Closes:
+    #21187)
+  * Error message while accessing tracking code when Tour plugin is
+    disabled [by @sgiehl] (Closes: #21200)
+  * "Plugins" menu item translation error on narrow screens (Closes:
+    #21204)
+  * Upload & install plugin ZIP fails with "Wrong username and/or
+    password." (Closes: #21274)
+  * Date comparison selector should stay when changing site (Closes:
+    #20321)
+  * Full refactor of site content detection and no data page logic [by
+    @sgiehl] (Closes: #21029)
+  * process general goal metrics if no conversions, but site is
+    ecommerce enabled [by @diosmosis, @sgiehl] (Closes: #21265)
+  * When adding a website, after an error occurred, "Save" button
+    remains un-clickable [by @sgiehl] (Closes: #21276)
+  * [Bug] Slow archiving query because of MySQL optimizer making wrong
+    decision (Closes: #21635)
+  * Avoid additional uncached requests to SegmentEditor.getAll [by
+    @sgiehl] (Closes: #21580)
+  * Add method getPageViewId to JavaScript tracker to receive current
+    page view id [by @EPNW-Eric, @sgiehl] (Closes: #21399)
+  * [Bug]: Search icon not showing up on the device report [by @bx80]
+    (Closes: #21406)
+  * Adjust day to fetch new geo location databases when done monthly [by
+    @PowerKiKi, @sgiehl] (Closes: #21468)
+  * Add new plugin subscriptions menu item [by @bx80] (Closes: #21542)
+  * Exclude wbraid and gbraid URL parameters by default [by @tsteur]
+    (Closes: #21467)
+  * "Plugins" menu item translation error on narrow screens (Closes:
+    #21204)
+  * Matomo update check times out at times (Closes: #21259)
+  * Upload & install plugin ZIP fails with "Wrong username and/or
+    password." (Closes: #21274)
+  * Fatal error: "Call to a member function getColumn() on null" in
+    DataTableRowAction/RowEvolution.php [by @sgiehl] (Closes: #21282)
+  * Rowevolution is showing the ID instead label (Closes: #21283)
+  * GDPR tools doesn't support Custom Dimensions [by @sgiehl] (Closes:
+    #21286)
+  * When disabling visitor profile feature, then also disable related
+    segment to prevent archiving from failing (Closes: #21318)
+  * Fix for "What's new" content visible when it shouldn't be [by @bx80]
+    (Closes: #21341)
+  * Fatal error: Call to undefined method getDataTables in
+    ComparisonRowGenerator.php [by @sgiehl] (Closes: #21352)
+  * [Bug]: In the Visitor Map Piemonte, Italy inherits the visits of
+    Liguria, Italy [by @sgiehl] (Closes: #21358)
+  * [Bug]:  Trying to add two strings in DataTable\Row::sumRowArray: 0 +
+    0% for column revenue_evolution and nb_conversions_evolution in row
+    [by @mneudert] (Closes: #21373)
+  * [Bug]: Blank screen crash when showing update notification [by
+    @bx80] (Closes: #21446)
+  * Fix possible action data loss in segmentation due to signed int32
+    overflow [by @MichaelRoosz, @sgiehl] (Closes: #21451)
+  * Fix problem with incorrectly placed modals [by @sgiehl] (Closes:
+    #21461)
+  * Fix operator handling in subquery segment values [by @mneudert,
+    @sgiehl] (Closes: #21506)
+  * Preopened popups on dashboard might fail to load their content [by
+    @sgiehl, @bx80] (Closes: #21510)
+  * [PHP 8.x compatibility] Fix possible deprecation warning in
+    ProxyHttp class [by @sgiehl, @caddoo] (Closes: #21515)
+  * Fix "revenue per visit" calculation [by @mneudert] (Closes: #21555)
+  * [Bug] No Data screen for SPAs contains hidden space in variables [by
+    @sgiehl] (Closes: #21594)
+  * Fix problem with metric formatting in cloud visualization [by
+    @sgiehl] (Closes: #21598)
+  * [Bug] Ecommece Overview revenue chart broken with change from SEK ->
+    KR [by @mneudert] (Closes: #21612)
+  * [Bug] System Check: Mouse over text no translatable [by @sgiehl]
+    (Closes: #21627)
+  * [Bug] i18n: German mouse over has issues with "o [by @sgiehl]
+    (Closes: #21628)
+  * [Bug] PHP Deprecated Creation of dynamic property [by @sgiehl]
+    (Closes: #21637)
+  * Logged in but you don't have any permission should not HTTP 500 [by
+    @sgiehl] (Closes: #19774)
+  * Improve our "What's new" feature to increase visibility (Closes:
+    #20283)
+  * Archiving error when getmypid function is disabled [by @sgiehl]
+    (Closes: #20537)
+  * Fatal error: Impossible to invoke a method ("getRows") on a boolean
+    variable in _dataTableViz_htmlTable.twig [by @sgiehl] (Closes:
+    #20585)
+  * Implement new layout for no data screen [by @sgiehl, @caddoo,
+    @michalkleiner, @mneudert] (Closes: #21247)
+  * process general goal metrics if no conversions, but site is
+    ecommerce enabled [by @diosmosis, @sgiehl] (Closes: #21265)
+  * When adding a website, after an error occurred, "Save" button remains
+    un-clickable [by @sgiehl] (Closes: #21276)
+  * Hide page performance row action on totals row [by @sgiehl, @bx80]
+    (Closes: #21279)
+  * [Bug]: Translation strings missing in 5.0 for user feedback text
+    (Closes: #21365)
+  * Exclude twclid URL parameter by default [by @tsteur] (Closes:
+    #21452)
+  * Escape underscore in archive name when used in like query [by
+    @sgiehl] (Closes: #21495)
+  * Fixing PHP 8.3 deprecation error [by @snake14, @bx80] (Closes:
+    #21522)
+  * Tabs in glossary are not rendered correctly [by @sgiehl] (Closes:
+    #21526)
+  * [Bug] Fatal error: Call to a member function getSqlSegment() on null
+    in Segment.php [by @sgiehl] (Closes: #21573)
+  * Move plugin related sub menu items to new Plugins menu item [by
+    @sgiehl] (Closes: #21605)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 27 Apr 2024 17:32:32 +0200
+
 matomo (4.16.0-2) stable; urgency=high
 
   * Change lintian overrides since we are now using Bookworm to build
@@ -4712,7 +5089,7 @@ matomo (3.6.0-1) stable; urgency=high
     @sgiehl] (Closes: #13291)
   * MySQL 5.7.17 compatibility (where group replication enabled by
     default) [by @diosmosis] (Closes: #11596)
-  * Allow to provide secondary sort column for reports [by @sgiehl,
+  * Allow one to provide secondary sort column for reports [by @sgiehl,
     @diosmosis] (Closes: #12128)
   * Widget title does not change when switching to related report [by
     @sgiehl] (Closes: #12681)
@@ -5511,7 +5888,7 @@ matomo (3.4.0-1) stable; urgency=high
   * Remove word "website" from website selector [by @tsteur] (Closes:
     #9063)
   * Better adblock detection during setup (Closes: #11660)
-  * Allow to login by Email as well as Username (Closes: #11959)
+  * Allow one to login by Email as well as Username (Closes: #11959)
   * Hide widgets not working without internet connection if disabled in
     config [by @sgiehl, @mattab] (Closes: #12279)
   * Add new keyboard shortcuts for Top/Bottom of page (Closes: #12456)
@@ -7223,8 +7600,8 @@ piwik (3.0.0-1) stable; urgency=high
   * World Map update (Lesotho, Palestine) [by @polyfloyd, @sgiehl,
     @mattab] (Closes: #10352)
   * Show version of piwik at install [by @mattab] (Closes: #10371)
-  * Allow to install Piwik in database name containing a hyphen "-" [by
-    @wronan, @mattab] (Closes: #10547)
+  * Allow one to install Piwik in database name containing a hyphen "-"
+    [by @wronan, @mattab] (Closes: #10547)
   * Add Bandwidth plugin as a submodule [by @mattab] (Closes: #10668)
   * Update Marketplace to work with new API [by @tsteur, @mattab]
     (Closes: #10799)
@@ -7397,7 +7774,7 @@ piwik (3.0.0-1) stable; urgency=high
     ca) [by @sgiehl] (Closes: #10853)
   * Use our own, faster arrayCache, compat for Piwik 3 [by @tsteur]
     (Closes: #13)
-  * Allow to use unix socket for redis backend [by @deees, @tsteur]
+  * Allow one to use unix socket for redis backend [by @deees, @tsteur]
     (Closes: #14)
   * Improve device detection [by @DaimonPl, @sgiehl] (Closes: #5553)
   * Remove extra filler in README description [by @719media, @sgiehl]
@@ -8300,7 +8677,7 @@ piwik (2.16.0-1) stable; urgency=high
   * Custom variables report bug - missing visits sum [by @mattab]
     (Closes: #8128)
   * Add a command to generate a UI test for plugins (Closes: #6741)
-  * Allow to profile all archiving subrequests: forward PHP CLI
+  * Allow one to profile all archiving subrequests: forward PHP CLI
     parameters to CLI subrequests [by @tsteur] (Closes: #9258)
   * Introducing Long Term Support for Piwik 2.X (Closes: #8546)
   * Admin users don't see all users but can now "Give an existing user
@@ -8930,7 +9307,7 @@ piwik (2.14.1-1) stable; urgency=high
     certificates / net::ERR_INSECURE_RESPONSE (Closes: #8220)
   * Use translated plugin description if available [by @sgiehl, @mattab]
     (Closes: #8208)
-  * Allow to test all API endpoints using SystemTestCase::runApiTests
+  * Allow one to test all API endpoints using SystemTestCase::runApiTests
     [by @mattab] (Closes: #8188)
   * Improve logging for "unexpected website" [by @mattab] (Closes:
     #7698)
@@ -9020,8 +9397,8 @@ piwik (2.14.0-1) stable; urgency=high
   * Remove UserSettings Plugin [by @tsteur] (Closes: #7846)
   * Report classes should not be instantiated directly [by @tsteur]
     (Closes: #7821)
-  * Tracking code generator: Allow to generate tracking code for mobile
-    apps etc. (Closes: #7803)
+  * Tracking code generator: Allow one to generate tracking code for
+    mobile apps etc. (Closes: #7803)
   * Create and maintain up-to-date the Piwik Roadmap (Closes: #7624)
   * noindex, nofollow option [by @mattab, @mnapoli, @tsteur] (Closes:
     #6552)
@@ -11513,8 +11890,8 @@ piwik (2.0.3-1) stable; urgency=high
   * Can't open Plugins/Themes because my server and client are off the
     internet (Closes: #4431)
   * Exclude from traffic Baidu bot and Yandex bot (Closes: #4504)
-  * Allow to define the time to look back to define a returning visitor
-    (Closes: #3695)
+  * Allow one to define the time to look back to define a returning
+    visitor (Closes: #3695)
   * Visitor Log: returning visitors: show number of visits (Closes:
     #4319)
   * Add setting to disable LOAD DATA INFILE, for easy Mysql replication
