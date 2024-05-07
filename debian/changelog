@@ -1,3 +1,30 @@
+matomo (5.0.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.0.1
+  * TV Detection Improvements (Closes: #7527)
+  * Various Devices Detection Improvement (Closes: #7528)
+  * Vestel Production TV Devices (Closes: #7535)
+  * VIDAA OS / Hisense Production TV Devices (Closes: #7536)
+  * Android Set-Top-Boxes (Closes: #7537)
+  * Amazon Fire TV Detection by Build Models (Closes: #7539)
+  * Adds detection for Altimo, AmazonBasics, Atlantic Electrics, Black
+    Box, Canal+, Cecotec, DIORA, Dinalink, Elektroland, FITCO, Filimo,
+    Graetz, HOFER, Homatics, Kendo, Maxwell, MEGA VISION, MEO, NABO,
+    NetBox, OCEANIC, Orava, Play Now, PROSONIC, Sagemcom, SEHMAX, Silva
+    Schneider, Solas, Super General, TADAAM, TAUBE, VANGUARD, Walker,
+    We. by Loewe., WONDER brands. improves detection for other brands,
+    improves version detection for Fire OS [by @liviuconcioiu,
+    @sanchezzzhak] (Closes: #7540)
+  * CaptiveNetworkSupport agent not all identified (Closes: #7541)
+  * Adds detection for Express LUCK, Ooredoo, Tsinghua Tongfang, XGEM
+    brands, Nuanti Meta browser, DIGA, YouView mediaplayers and improves
+    detection for various brands [by @liviuconcioiu, @sanchezzzhak]
+    (Closes: #7542)
+  * Adds detection for OWLer and BBC bots, improves version detection
+    for iOS and macOS [by @liviuconcioiu, @sanchezzzhak] (Closes: #7546)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 07 May 2024 18:06:04 +0200
+
 matomo (5.0.0-1) stable; urgency=high
 
   * Releasing Matomo 5.0.0
