@@ -1,3 +1,27 @@
+matomo (5.0.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.0.2
+  * Ensure values of fields with type password are redacted in API
+    response [by @sgiehl] (Closes: #21809)
+  * Remove Cloudflare from No Data Screen [by @sgiehl] (Closes: #21752)
+  * Page Performance reports don't show data (empty graph) when viewing
+    performance for a flattened page URL [by @sgiehl] (Closes: #17807)
+  * Fix possible deprecation warning in UsersManager.getUsersPlusRole
+    API [by @sgiehl] (Closes: #21810)
+  * [Bug] Sorting Product Revenue in Ecommerce not working [by @sgiehl]
+    (Closes: #21829)
+  * [Bug] Annotations get wrong date on timeline chart view [by
+    @mneudert] (Closes: #21837)
+  * Always show evolution of "0%" for sparklines [by @sgiehl] (Closes:
+    #21595)
+  * [Bug] Unable to close visitor profile by clicking 'x' button with
+    one click. [by @sgiehl] (Closes: #21762)
+  * Enable language Gujarati [by @sgiehl] (Closes: #21769)
+  * [Bug] Console Archive Command ignores `-quiet` in v5.0.1 [by
+    @sgiehl] (Closes: #21800)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 07 May 2024 18:10:37 +0200
+
 matomo (5.0.1-1) stable; urgency=high
 
   * Releasing Matomo 5.0.1
