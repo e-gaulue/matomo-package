@@ -1,3 +1,20 @@
+matomo (5.0.3-1) stable; urgency=high
+
+  * Releasing Matomo 5.0.3
+  * Visits log executes thousands of DB queries in a single request in
+    getAliasSiteUrlsFromId() [by @mneudert] (Closes: #21971)
+  * Scheduled report shows square character in HTML report in date [by
+    @mneudert] (Closes: #21186)
+  * [Bug] Bad date formatting in email reports [by @mneudert] (Closes:
+    #21867)
+  * [Bug] Call to a member function getSeriesCount() on null [by
+    @mneudert] (Closes: #22001)
+  * [Bug] cron:archive CLI changed response format in Matomo 5 - instead
+    of DateTime before every row, only time is displayed [by @sgiehl]
+    (Closes: #21924)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 07 May 2024 18:15:31 +0200
+
 matomo (5.0.2-1) stable; urgency=high
 
   * Releasing Matomo 5.0.2
