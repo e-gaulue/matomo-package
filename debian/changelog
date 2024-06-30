@@ -1,3 +1,80 @@
+matomo (5.1.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.1.0
+  * Ensure to correctly encode segment title for tooltips [by @sgiehl]
+    (Closes: #22223)
+  * Escape hover tooltip text in SiteSelector [by @AltamashShaikh,
+    @sgiehl] (Closes: #22243)
+  * Allow configuration of max execution time when using MariaDB [by
+    @sgiehl] (Closes: #18360)
+  * [GDPR issue / feature request] CNIL configuration guide for Matomo
+    is not enough for consent exemption, and Matomo does not currently
+    offer paliative options [by @caddoo] (Closes: #21941)
+  * Update resolution in subsequent tracking requests if previously
+    unknown [by @seb303, @sgiehl] (Closes: #22080)
+  * Connect free trial start with marketplace account creation [by
+    @mneudert, @caddoo] (Closes: #22088)
+  * Allow users to request a premium feature trial [by @sgiehl] (Closes:
+    #22139)
+  * Display notification about not yet processed data also when visits
+    log is disabled [by @sgiehl] (Closes: #22178)
+  * Ensure to perform complex column updates only when supported [by
+    @sgiehl] (Closes: #22232)
+  * Add pure CSS Matomo loader [by @michalkleiner, @sgiehl] (Closes:
+    #22240)
+  * Improve opt out compatibility with older browsers [by @sgiehl,
+    @michalkleiner] (Closes: #22217)
+  * Dependency jquery.dotdotdot has a non-commercial license [by
+    @sgiehl] (Closes: #20941)
+  * Set autocomplete property on login form fields [by @bx80, @sgiehl]
+    (Closes: #22023)
+  * Segment-Creation with "Please specify a value for 'definition'."
+    error [by @sgiehl] (Closes: #22028)
+  * [Bug] Segment creation is taking the previous segment configuration
+    [by @sgiehl] (Closes: #22045)
+  * [Bug] Do not send Notification Email to anonymous user [by @sgiehl]
+    (Closes: #22068)
+  * [Bug] Sending "lang" via HTTP API ignores country when upper case
+    [by @sgiehl] (Closes: #22077)
+  * Fixing small bug in the formatPercent method [by @snake14, @sgiehl]
+    (Closes: #22082)
+  * [Bug] Matomo 5.0.2 : /core/Filechecks.php(153): Deprecated - trim():
+    Passing null to parameter #1 ($string) of type string is deprecated
+    [by @michalkleiner] (Closes: #22101)
+  * [Bug] Installation can be continued with missing database privileges
+    [by @textagroup] (Closes: #22187)
+  * [Bug] Improve accessibility of top menu (missing role attributes)
+    [by @textagroup] (Closes: #22188)
+  * [Bug] Charts for Conversions by Entry Pages & Page Titles Broken [by
+    @sgiehl] (Closes: #22236)
+  * Missing delimiter for preg_match pattern in
+    UrlHelper::inArrayMatchesRegex [by @sgiehl] (Closes: #22248)
+  * Allow to distinguish between MySQL and MariaDB (also in
+    installation) [by @sgiehl, @mneudert] (Closes: #18371)
+  * When Visits log is disabled, and looking at today's report, the
+    notification explaining that reports are not yet processed is not
+    displayed [by @sgiehl] (Closes: #19736)
+  * Ignore anonymous user when checking for allowed domains [by @sgiehl]
+    (Closes: #22044)
+  * Refactor plugin details modal using Vue [by @michalkleiner,
+    @mneudert] (Closes: #22055)
+  * Remove shop links from plugin details modal [by @mneudert,
+    @michalkleiner] (Closes: #22154)
+  * Add preview release channel [by @caddoo, @sgiehl] (Closes: #22205)
+  * Replace usage of SQL_CALC_FOUND_ROWS with separate queries [by
+    @sgiehl] (Closes: #22225)
+  * Move Goal actions into single actions column [by @snake14, @caddoo]
+    (Closes: #22228)
+  * Fix: skipping a Tour challenge shows an error message [by @sgiehl,
+    @mneudert] (Closes: #22231)
+  * Update 'Install all paid plugins at once' functionality and remove
+    license key mgmt from Marketplace [by @michalkleiner] (Closes:
+    #22237)
+  * Add tests for OptOutJS integration [by @mneudert, @sgiehl] (Closes:
+    #22244)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 30 Jun 2024 22:03:14 +0200
+
 matomo (5.0.3-1) stable; urgency=high
 
   * Releasing Matomo 5.0.3
