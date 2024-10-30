@@ -97,7 +97,7 @@ matomo: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/matom
 matomo: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/piwik.js]
 
 # Matomo use it's own bug numbers
-#EG 2024-10-30 matomo: improbable-bug-number-in-closes
+matomo: improbable-bug-number-in-closes
 
 # Change/reset permission on /var/lib/matomo/data/tmp to www-data 0755/0644
 matomo: recursive-privilege-change "chown -R" [postinst:20]
