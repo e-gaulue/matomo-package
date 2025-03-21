@@ -1,3 +1,9 @@
+matomo (5.3.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.3.1
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Fri, 21 Mar 2025 23:16:20 +0100
+
 matomo (5.3.0-1) stable; urgency=high
 
   * Releasing Matomo 5.3.0
