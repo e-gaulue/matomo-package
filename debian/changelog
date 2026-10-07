@@ -1,22 +1,928 @@
+matomo (5.14.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.14.0
+  * #25090, #25076 Show percentage of report total in AI Chatbot
+    reports. [by @sgiehl]
+  * #25175, #25115 Forecast unique visitors and distinct counts from
+    period-level history. [by @mneudert]
+  * Render pie charts as perfect circles with clean slice edges. [by
+    @nathangavin] (Closes: #24928)
+  * Show aggregated real-time counters when Visits Log is disabled. [by
+    @nathangavin] (Closes: #24969)
+  * Report empty login fields instead of disabling the sign-in button.
+    [by @chippison] (Closes: #25056)
+  * Refresh the login and invitation page layout. [by @chippison]
+    (Closes: #25057)
+  * Add a Whats New panel to the login layout. [by @chippison] (Closes:
+    #25058)
+  * Show the selected goals conversions in bar, pie and evolution
+    charts. [by @nathangavin] (Closes: #25084)
+  * Align PDF report label linking with the HTML report renderer. [by
+    @sgiehl] (Closes: #25093)
+  * Add events to customise the no data page. [by @caddoo] (Closes:
+    #25116)
+  * Show percentages on subpages of a searched report. [by @chippison]
+    (Closes: #25133)
+  * #25152, #3426 Split All Websites out of the Compliance page website
+    selector. [by @nathangavin]
+  * Restore the period tooltip on redesigned sparkline cards. [by
+    @chippison] (Closes: #25179)
+  * Speed up loading of the Marketplace page. [by @snake14] (Closes:
+    #25207)
+  * Stop widget controls squeezing the report header title. [by
+    @chippison] (Closes: #25228)
+  * Size sparkline card images from the measured container instead of
+    scaling. [by @chippison] (Closes: #25280)
+  * #1145, #123, #1148 Improve help icon position on card hover. [by
+    @tzi]
+  * #1152, #123 Update variable name change handling. [by @lachiebol]
+  * Update mobile left-menu screenshot for the search-input restyle. [by
+    @tzi] (Closes: #1155)
+  * Fix error when creating new tags by publishing a default container
+    version. [by @AltamashShaikh] (Closes: #1157)
+  * Fix loader not displaying correctly in dark mode. [by @chippison]
+    (Closes: #1184)
+  * Type tag, trigger and variable type parameters as plugin settings.
+    [by @mneudert] (Closes: #1190)
+  * Clarify the preview mode notification. [by werner-calitz-innocraft]
+    (Closes: #1153)
+
+  * Rename the package to matomo-vanilla. The name matomo belongs to the
+    package Debian distributes, and two different packages answering to one
+    name is a trap: whichever repository offers the higher version wins, so an
+    upgrade can replace one with the other without saying so. The new name
+    says what this package is -- Matomo as upstream publishes it, on the
+    release upstream has published, rather than the snapshot frozen into a
+    Debian release.
+  * Replace matomo 1:5.3.1-2, the announcement-only version published last
+    under the old name, and nothing older: up to 5.3.1-1 the prerm deletes
+    /var/lib/matomo on removal, so those versions are refused with the
+    instruction to upgrade first. Nothing is declared about the versions
+    Debian publishes, so that an installation of Debian's package is seen,
+    refused and explained rather than removed by apt.
+  * Install Marketplace extensions outside the code tree, under
+    /var/lib/matomo/plugins, reached through a bootstrap.php that sets
+    MATOMO_PLUGIN_DIRS. Extensions therefore survive an upgrade of the
+    package, and not one file inside /usr/share/matomo needs to be writable by
+    the web server -- which also leaves Matomo's own file integrity check
+    satisfied.
+  * Refuse to install over a Matomo tree that dpkg did not put there, naming
+    what was found instead of overwriting it.
+  * Archive through a systemd timer rather than /etc/cron.d, as Debian now
+    asks. Its output goes to the journal; 'journalctl -u matomo' shows it.
+
+  * Ship an optional matomo-vanilla-logfile package, for whoever had the
+    archiving log file and wants it unchanged. It writes to
+    /var/log/matomo/matomo-archive.log and to the journal both, and brings its
+    own rotation rule. Removing the package is all it takes to settle on the
+    Debian default.
+  * Keep Matomo's one-click updater off by default, which withdrawing the
+    modified global.ini.php from /etc had quietly stopped doing. The setting
+    now lives in /etc/matomo/common.config.ini.php, a file Matomo merges as a
+    default and never writes to, so config.ini.php still has the last word and
+    turning the updater on stays the administrator's decision -- a decision
+    that also needs the code tree handed to the web server, which
+    README.Debian now says.
+  * Find the package that owns /usr/share/matomo through dpkg's file lists
+    rather than through package status, which cannot answer it: dpkg records
+    the package being installed, under its new version and a half-installed
+    status, before running the preinst. Read from status, matomo-vanilla
+    upgrading itself looked like a tree owned by a stranger or by nobody, and
+    an ordinary version upgrade was refused with advice to move the tree
+    aside.
+  * Offer to enable report archiving instead of shipping the timer disabled
+    and leaving it to be remembered. Which question is put depends on what is
+    already running: an archiving cron job can be kept -- the file is put back
+    as it was and the timer stays inactive -- or handed over to the timer;
+    with nothing running, the timer is offered; with a timer already enabled,
+    or a timer drop-in under /etc, nothing is asked and nothing is touched.
+  * Skip the archiving run until Matomo has been set up, through
+    ConditionPathExists on the unit. A failing condition is not a failure, so
+    a timer enabled at install time waits quietly for the web installer
+    instead of reporting an error every hour -- which is what makes offering
+    to enable it answerable at all.
+  * Correct the debconf templates. The major-version question did not say that
+    declining stops the installation and changes nothing, which is the one
+    fact worth knowing before answering it; the database question was written
+    in broken English and named Piwik for what Matomo does; and the piwik-era
+    template, which is read but never put, now says so.
+  * Drop Piwik from the package's own prose, keeping it only where it names
+    the older piwik package or an upstream identifier. Refresh
+    debian/copyright, whose per-file stanzas listed nine files the packaging
+    no longer has.
+  * Drop the recommendation of php-geoip, which Debian 12 and 13 do not
+    ship. Matomo 5 locates visitors with GeoIP 2 / DB-IP through a reader it
+    bundles; php-maxminddb, suggested, only speeds it up. An unsatisfiable
+    Recommends is also what made "apt upgrade" hold a new package back.
+
+  * Keep the GeoIP 2 / DB-IP databases outside the code tree, under
+    /var/lib/matomo/geoip: Matomo downloads them itself, into path.geoip2,
+    which upstream defines as misc/ in the tree. bootstrap.php redefines it
+    through StaticContainer::addDefinitions(), upstream's own hook. A database
+    placed in misc/ by hand under the previous package is moved there once.
+
+  * Ask, at installation, whether to serve Matomo at /matomo on every site
+    of the web server, and say what that opens: until the web installer is
+    completed, that address lets anyone who reaches the server set Matomo
+    up. Declined by default; declining enables nothing and disables nothing.
+
+  * Ship the repository signing key as /usr/share/keyrings/matomo-archive-
+    keyring.gpg, for a sources entry with signed-by, rather than into
+    /etc/apt/trusted.gpg.d where it was trusted for every repository. It is
+    the RSA-4096 key published since 2016, with its self-certification
+    refreshed in SHA-256 so that Debian 13 accepts it, and a signing subkey
+    added: the matomo-vanilla suite is signed by that subkey alone, so the
+    copy of the key the old matomo package installed cannot verify it, and
+    the switch takes the new keyring deliberately. The fingerprint is
+    unchanged. The 2013 DSA key is no longer shipped.
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 29 Sep 2026 22:38:30 +0200
+
+matomo (5.13.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.13.0
+  * Fix archive aggregation across multiple sites for the same period.
+    [by @sgiehl] (Closes: #24844)
+  * Name the reportTotal metric keys in Referrers.getAll. [by @mneudert]
+    (Closes: #24879)
+  * Require password confirmation when granting the admin role. [by
+    @sgiehl] (Closes: #24775)
+  * Move submodule markers back to 5.x-dev [by @sgiehl] (Closes: #24791)
+  * Add no-data banner to the AI Chatbot Real-time page. [by
+    @nathangavin] (Closes: #24797)
+  * Fix unreadable Display options label in Dark Mode on scheduled
+    reports. [by @caddoo] (Closes: #24824)
+  * Show a clear error for empty patterns on non-manual goals. [by
+    @nathangavin] (Closes: #24828)
+  * Cap Ecommerce money values and handle extreme amounts safely. [by
+    @nathangavin] (Closes: #24831)
+  * #24834, #24803 Add opt-in SSRF-safe HTTP fetch for user-configured
+    URLs. [by @maxtaube]
+  * Improve Row Evolution modal text contrast in Dark Mode. [by @caddoo]
+    (Closes: #24837)
+  * #24838, #21944 Persist ViewDataTable settings per container across
+    reloads. [by @nathangavin]
+  * Serve flat Actions reports from the pre-flattened archive. [by
+    @sgiehl] (Closes: #24842)
+  * #24851, #24786 Add DateAtom sparkline-card component. [by
+    @chippison]
+  * #24852, #24787 Add the Date Comparison mode card. [by @chippison]
+  * #24853, #24816 Backport Segment and Date Comparison mode to 5.x. [by
+    @chippison]
+  * Apply table search filter after combining multi-dimension labels [by
+    @nathangavin] (Closes: #24862)
+  * #24870, #21812 Show small Referrers channel-type shares precisely
+    instead of 0%. [by @nathangavin]
+  * Add What's New entry for Cohorts and Funnels dashboard widgets. [by
+    @snake14] (Closes: #24871)
+  * Migrate the widget header to a Vue component. [by @tzi] (Closes:
+    #24876)
+  * #24883, #24881 Differentiate EOL for MariaDB Community and
+    Enterprise Server. [by @YKWeyer]
+  * Improve help icon position on card hover. [by @Armanio, @tzi]
+    (Closes: #24892)
+  * Scale metric value font to container size to prevent overflow. [by
+    @chippison] (Closes: #24900)
+  * Prevent stale idsite from persisting in marketplace links. [by
+    @nathangavin] (Closes: #24903)
+  * Correctly override trust_visitors_cookies for intranet sites. [by
+    @mroosz-c24, @tzi] (Closes: #24909)
+  * #24911, #20297 Allow pending invitees to recover account access. [by
+    @drewmt]
+  * Detect Google-GeminiNotebook as Google-NotebookLM. [by @eldk]
+    (Closes: #24913)
+  * Harden Page Overlay API request handling. [by @nathangavin] (Closes:
+    #24920)
+  * Render the sparklines grid using CSS grid. [by @chippison] (Closes:
+    #24922)
+  * Fix mismatched Ecommerce metric labels on sparkline cards. [by
+    @chippison] (Closes: #24926)
+  * Fix metric selector spacing on bar and pie charts. [by @chippison]
+    (Closes: #24930)
+  * Show metric forecast on evolution graphs for incomplete periods. [by
+    @mneudert] (Closes: #24938)
+  * Fix value substitution in sparkline description placeholders. [by
+    @sgiehl] (Closes: #24939)
+  * Fix oversized sparklines on the Segment Management page. [by
+    @chippison] (Closes: #24941)
+  * Fix rendering of sparkline description placeholders [by @sgiehl]
+    (Closes: #24950)
+  * Scope goal-name segment matching to the correct site. [by @sgiehl]
+    (Closes: #24962)
+  * Encode comparison series suffix in comparison labels. [by @sgiehl]
+    (Closes: #24965)
+  * Update sparkline UI screenshots and specs for the redesign. [by
+    @chippison] (Closes: #24992)
+  * Enable the sparklines redesign for all users. [by @chippison]
+    (Closes: #24993)
+  * Add AIProviders plugin. [by @mneudert] (Closes: #25037)
+  * #24849, #21789 Improve error message for users using a Secure Only
+    token in the API. [by @chippison]
+  * Improve help icon positioning on card hover [by @tzi] (Closes:
+    #1148)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:50:18 +0200
+
+matomo (5.12.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.12.0
+  * #23249, #22587 Automatically update idvisitor column across log
+    tables on change. [by @sgiehl, @caddoo]
+  * Use flat-first archiving for Actions reports to reduce memory usage.
+    [by @sgiehl] (Closes: #24191)
+  * Fix pagination Next button visible when all data fits on one page.
+    [by @clcl777] (Closes: #24206)
+  * Ignore AI assistant campaign attribution in tracker. [by @tzi]
+    (Closes: #24534)
+  * Add AI Chatbots Content Requests reports for pages and documents.
+    [by @sgiehl] (Closes: #24573)
+  * Adds superuser admin warnings ahead of Matomo 6 requirement changes.
+    [by @sgiehl] (Closes: #24580)
+  * Improve preset period selector behaviour. [by @tzi] (Closes: #24584)
+  * Apply new plot line colours. [by @chippison] (Closes: #24587)
+  * Do not update comparison state when popover parameter changes. [by
+    @sgiehl] (Closes: #24588)
+  * Redesign chart legends. [by @tzi, @chippison] (Closes: #24604)
+  * Add Human-Favoured and AI-Favoured Pages reports for AI Chatbots.
+    [by @sgiehl] (Closes: #24610)
+  * Fix blank Ecommerce evolution graph when comparing periods. [by
+    @caddoo] (Closes: #24612)
+  * Fix KPI widget for metrics where a lower value is better. [by
+    @sgiehl] (Closes: #24615)
+  * #24620, #24591 Apply excluded query parameter rules to bot tracking
+    URLs. [by @sgiehl]
+  * Fix incorrect IP anonymization reading in CNIL check. [by
+    @chippison] (Closes: #24622)
+  * Activity log search now also matches group names. [by @lachiebol]
+    (Closes: #24625)
+  * Update the plot and chart metric selector. [by @chippison] (Closes:
+    #24641)
+  * Update Tag Manager icon on the no-data page. [by @sgiehl] (Closes:
+    #24643)
+  * Improve help icons and inline help in dark mode. [by @tzi] (Closes:
+    #24646)
+  * Align TSV report renderer name handling with CSV. [by @sgiehl]
+    (Closes: #24652)
+  * #24655, #24654 Fix saving annotations on date range periods. [by
+    @chippison]
+  * Fix comparison sparkline colours for positive and negative values.
+    [by @nathangavin] (Closes: #24656)
+  * Add AI Insights top menu and reporting menu groups. [by @sgiehl]
+    (Closes: #24659)
+  * Adds What's new entry for new AI Chatbots Content Requests Reports.
+    [by @sgiehl] (Closes: #24661)
+  * Fix Visitors Map legend and stats colours in dark mode. [by
+    @chippison] (Closes: #24663)
+  * Fix Devices report icons in dark mode. [by @chippison, @sgiehl]
+    (Closes: #24675)
+  * Use new monochrome icons manifest for dark mode. [by @sgiehl]
+    (Closes: #24682)
+  * AI assistant now available on the real-time page. [by @nathangavin]
+    (Closes: #24686)
+  * Fix goal segment comparisons to use the originally selected date
+    range. [by @nathangavin] (Closes: #24694)
+  * #24698, #22548 Improve region names for better geolocation database
+    detection. [by @sgiehl]
+  * Escape setDomains and setCookieDomain values in the generated
+    tracking snippet. [by @paul9590] (Closes: #24699)
+  * Fix duplicate results and section switching in AI Insights quick
+    search. [by @sgiehl] (Closes: #24700)
+  * Fix segment editor modal to follow dark mode theme. [by @tzi]
+    (Closes: #24707)
+  * Fix site selector search visibility in dark mode. [by @tzi] (Closes:
+    #24708)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:46:38 +0200
+
+matomo (5.11.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.11.2
+  * Improve date handling for annotations. [by @sgiehl] (Closes: #24589)
+  * Fixes the escaping of the export dashboard notification. [by
+    @sgiehl] (Closes: #24594)
+  * Prevent widgetizing actions that do not serve HTML content. [by
+    @sgiehl] (Closes: #24607)
+  * #24614, #24611 Check table exists in update for 5.11.0. [by @sgiehl]
+  * Require password confirmation when changing mail settings. [by
+    @sgiehl] (Closes: #24617)
+  * Record failed login attempt on 2FA failure when creating app
+    specific token through API. [by @sgiehl] (Closes: #24621)
+  * Improve request handling for Overlay. [by @chippison] (Closes:
+    #24629)
+  * Validating dates in AjaxHelper. [by @chippison] (Closes: #24645)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:43:00 +0200
+
+matomo (5.11.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.11.1
+  * 24631: Update CNIL retention period requirement to 759 days. [by
+    @caddoo]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:39:25 +0200
+
+matomo (5.11.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.11.0
+  * Standardise textarea styling across forms with compact textarea
+    class. [by @maxtaube, @caddoo] (Closes: #24372)
+  * Replace Custom Reports child report sorting with a local Vue
+    draggable list. [by @maxtaube, @chippison, @caddoo] (Closes: #24375)
+  * #24416, #213 Campaign parameters now masked rather than removed with
+    CNIL. [by @nathangavin]
+  * Make IP Anonymization setting clearer. [by @chippison] (Closes:
+    #24512)
+  * #24453, #24421 Allow double click on presets. [by @tzi]
+  * #24476, #24475 Fix language selector hover background. [by @caddoo]
+  * "Send Report now" in schedule report fails when a period is a "date
+    range". [by @chippison] (Closes: #24488)
+  * Fix Marketplace test leakage. [by @caddoo] (Closes: #24490)
+  * Improve scheduled report validation feedback. [by @tzi] (Closes:
+    #24492)
+  * Migrate panel to Vue. [by @chippison, @caddoo] (Closes: #24494)
+  * Fix export - do not hide Flatten option when there is no subtables.
+    [by @tzi, @caddoo] (Closes: #24495)
+  * Add Description Fields and Change Helptexts. [by @maxtaube,
+    @chippison] (Closes: #24501)
+  * Segment editor implement UI tweak. [by @chippison, @caddoo] (Closes:
+    #24503)
+  * Fix issue with scheduled reports not sending when expected. [by
+    @caddoo] (Closes: #24508)
+  * Hide 'Expand subtable' option when HTML format is chosen from
+    export. [by @chippison] (Closes: #24513)
+  * #24514, #21610 Show goal revenue metric and sparkline when Ecommerce
+    disabled. [by @caddoo]
+  * Refactor add widget modal. [by @chippison] (Closes: #24518)
+  * Migrate modal to Vue. [by @chippison] (Closes: #24526)
+  * #24527, #22713 Refactor Ecommerce sparklines to use shared
+    CoreVisualizations implementation. [by @tzi]
+  * Dashboard manager dropdown redesign. [by @caddoo] (Closes: #24528)
+  * Fix issue with widgetised map getting a negative height. [by
+    @chippison] (Closes: #24529)
+  * Fix Ecommerce abandoned cart sparkline context. [by @tzi] (Closes:
+    #24531)
+  * Make addwidget modal 3-column. [by @chippison] (Closes: #24532)
+  * Update hover text for Visitor Profile export. [by @chippison]
+    (Closes: #24551)
+  * Redesign Addwidget Modal. [by @chippison] (Closes: #24555)
+  * Fix WidgetPreview for Goals > Overview and other widgets with
+    child/sub widgets. [by @chippison] (Closes: #24557)
+  * Implement missing Helptext on Manage Measurables View. [by
+    @maxtaube] (Closes: #24559)
+  * UI Tweaks for top nav menu items. [by @chippison] (Closes: #24562)
+  * Remove Carriage return from CSV/TSV values. [by @sgiehl] (Closes:
+    #24571)
+  * Fix Tag Manager top controls. [by @tzi] (Closes: #1108)
+  * Change Inline Helptexts and placeholders. [by @maxtaube] (Closes:
+    #1112)
+  * #1119, #24544 Move Tag Manager card higher under Websites > Tracking
+    Code. [by @chippison, @lachiebol]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:35:46 +0200
+
+matomo (5.10.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.10.1
+  * 24468: Store and verify user on 2FA verification process. [by
+    @nathangavin]
+  * 24567: Improve Row evolution. [by @chippison]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:32:10 +0200
+
+matomo (5.10.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.10.0
+  * New Dark mode theme setting. [by @tzi, @chippison, inspired by
+    OpenMost] (Closes: #23912)
+  * Dark Mode: fix flags border. [by @tzi] (Closes: #24369)
+  * Core rebrand changes. [by @chippison, @caddoo] (Closes: #24441)
+  * Fix contrast in white-label header. [by @tzi] (Closes: #24446)
+  * Cards, Widgets and background tweaks. [by @chippison] (Closes:
+    #24259)
+  * Updated left menu tweaks. [by @chippison] (Closes: #24399)
+  * Redesign of top control selectors. [by @tzi] (Closes: #24408)
+  * #24417, #23912 Redesign New Update button. [by @tzi]
+  * Redesign of top control selectors. [by @tzi] (Closes: #24426)
+  * Prevent modern content tables from overflowing their cards. [by
+    @caddoo] (Closes: #24400)
+  * Segment Management Page: keep action buttons styled on focus. [by
+    @tzi] (Closes: #24368)
+  * Actions: use configured delimiters for flat report labels. [by
+    @sgiehl] (Closes: #24388)
+  * #24300, #24030 Improve Goals submenu ordering. [by @maxtaube,
+    @sgiehl]
+  * #24402, #24400 Word wrap some values in the manage goals page. [by
+    @caddoo]
+  * #24373, #16963, #24340 Make Archive Table Creation Explicit in
+    ArchiveTableCreator. [by @sgiehl]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:28:36 +0200
+
+matomo (5.9.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.9.0
+  * #23885, #20659 Add a Segment Management Page. [by @tzi, @caddoo]
+  * #24204, #20618 remove current segment value from suggested values
+    request. [by @nathangavin, @sgiehl]
+  * #23423, #24185 Correctly normalise diacritics in segment search. [by
+    @sgiehl]
+  * #24208, #21062 Make the countryName segment case-insensitive. [by
+    @nathangavin, @sgiehl]
+  * Suppress form submission on Segment page. [by @nathangavin, @sgiehl]
+    (Closes: #24341)
+  * Fix DevicePlugins.getPlugin for multi-site multi-period requests.
+    [by @sgiehl] (Closes: #24281)
+  * Adds escaping for HTMLRenderer columns. [by @AltamashShaikh,
+    @sgiehl] (Closes: #24172)
+  * Update DOMPurify to latest version. [by @sgiehl] (Closes: #24180)
+  * Log peak memory usage during archiving. [by @sgiehl] (Closes:
+    #24036)
+  * Use long blobs instead of medium blobs for new archive tables. [by
+    @sgiehl] (Closes: #24270)
+  * #24214, #21478 Insert local config file path to config file page [by
+    @nathangavin, @sgiehl]
+  * #24226, #22198 Offer ability to sign someone out of all sessions.
+    [by @tsteur, @sgiehl]
+  * #24099, #23672 Add coverage for removing all user settings on
+    deletion. [by @nathangavin]
+  * #24019, #22119 Export Dashboard to Scheduled Reports. [by
+    @chippison]
+  * # 24080 Fix: Visitor Map does not display Okinawa when Japan is
+    selected. [by @Lycolia, @sgiehl]
+  * Clean up renamed daily unique metrics on parent rows in Actions
+    hierarchy. [by @sgiehl] (Closes: #24224)
+  * Calendar refresh V2. [by @chippison] (Closes: #24232)
+  * #24139, #18573, #22786 Differentiate current options
+    (Day/Week/Month/Year) from new presets. [by @chippison,
+    @nathangavin]
+  * #24289, #21712 Remove broken SEO widget. [by @sgiehl]
+  * #24294, #19733 Add goal report shortcut to Manage Goals page. [by
+    @maxtaube, @sgiehl]
+  * Updates Privacy / 'Asking for consent' page. [by @sgiehl] (Closes:
+    #24238)
+  * Update GDPR overview page. [by @nathangavin] (Closes: #24258)
+  * Add new privacy page and update controller & menu [by @nathangavin]
+    (Closes: #24262)
+  * Add new ePrivacy laws page. [by @nathangavin, @sgiehl] (Closes:
+    #24264)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:25:02 +0200
+
+matomo (5.8.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.8.0
+  * BotTracking NoData page [by @mneudert, @sgiehl] (Closes: #23973)
+  * #19218, #24113 Display tooltip on the gear green icon at the bottom
+    of reports. [by @georgebuilds, @sgiehl]
+  * #21996, #24050 Improve format of time-based metrics for scheduled
+    reports. [by @chippison, @sgiehl]
+  * #24049, #22067 Export | Enhanced visibility of TSV format option for
+    Excel. [by @chippison]
+  * Enhance options when exporting in CSV and TSV. [by @chippison,
+    @sgiehl] (Closes: #24045)
+  * Hide segmented visits log for empty page action values. [by @sgiehl]
+    (Closes: #24054)
+  * Update DDEV config to support v1.25.0 (Debian Trixie). [by
+    @mneudert, @caddoo] (Closes: #24056)
+  * Phase out legacy DataTable deserialization. [by @mneudert, @sgiehl]
+    (Closes: #24069)
+  * Add centralised conflict validation in AuthenticationToken. [by
+    @sgiehl, @caddoo] (Closes: #24073)
+  * Use request arrays instead of query strings for Request class. [by
+    @sgiehl] (Closes: #24082)
+  * Remove invalid throws notations. [by @sgiehl] (Closes: #24083)
+  * Add is_temporary flag to archiving metrics. [by @caddoo,
+    @nathangavin] (Closes: #24087)
+  * Improve unserialization array traversal. [by @mneudert, @sgiehl]
+    (Closes: #24090)
+  * Apply upsteam fixes to Authenticator. [by @sgiehl] (Closes: #24095)
+  * Support token_auth with higher access for configurable Module.Action
+    endpoints. [by @mneudert] (Closes: #24103)
+  * #20652, #24117 Fixed handling of missing action types in
+    VisitorDetails classes. [by @sgiehl]
+  * #21185, #24117 Fixed warnings in visits log: Trying to access array
+    offset on value of type null. [by @sgiehl]
+  * #24109, #24117 Fixed warning: Trying to access array offset on null.
+    [by @sgiehl]
+  * Fixed BarGraph tooltip. [by @sgiehl] (Closes: #24063)
+  * Fixed missing SimpleTable processed report metadata. [by @mneudert,
+    @sgiehl] (Closes: #24104)
+  * #21733, #23942, #236, #89, #37, #20 Fixed inconsistent terminology
+    in automated and main reports. [by @chippison, @sgiehl]
+  * Fixed handling idsite=all in API.getSuggestedValuesForSegment. [by
+    @sgiehl] (Closes: #24105)
+  * #24115, #24116 Fixed error for undefined array key "currencies" -
+    CurrencyDataProvider.php. [by @sgiehl]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:21:26 +0200
+
+matomo (5.7.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.7.1
+  * #23698, #24008 Reset dashboard not working until page reloads [by
+    @sgiehl]
+  * #24033, #24034 Infinite redirects after upgrading to 5.7.0 [by
+    @sgiehl]
+  * Harden handling for IdSite param in API requests [by @sgiehl]
+    (Closes: #24041)
+  * Correctly filter shared segments by available site access for user
+    [by @sgiehl] (Closes: #23650)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:17:51 +0200
+
+matomo (5.7.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.7.0
+  * Track AI Bots through our HTTP Tracking API [by @sgiehl, @mneudert,
+    @caddoo] (Closes: #23725)
+  * Adds reporting around requests made by AI bots [by @sgiehl] (Closes:
+    #23870)
+  * Remove MadMimi from Newsletter privacy note [by @sgiehl] (Closes:
+    #23818)
+  * Fix issue for saving of preferences throwing errors and redirecting
+    when logged in as anonymous user [by @chippison, @caddoo] (Closes:
+    #23903)
+  * Prevent logging tracking failure for obviously malformed idsite or
+    token auth [by @sgiehl] (Closes: #23743)
+  * Fix and Improve period selection via keyboard navigation [by @tzi]
+    (Closes: #23768)
+  * Allow to star and unstar stored segment [by @tzi] (Closes: #23771)
+  * Redirect to login page when session ends [by @chippison] (Closes:
+    #23783)
+  * Segment selector: max out at 5-6, instead of throwing many errors in
+    reporting interface [by @chippison] (Closes: #23792)
+  * Updates jQuery and jQuery-Mousewheel [by @sgiehl] (Closes: #23800)
+  * Change display to inline from inline-block for.table-action, #PG-
+    4790 [by @AltamashShaikh] (Closes: #23802)
+  * Show success notification once a Goal has been created or updated
+    [by @chippison] (Closes: #23809)
+  * Update html page title to have both the current active Segment as
+    well as Menu Category and Subcategory [by @chippison] (Closes:
+    #23815)
+  * Fix external theme that are using CSS custom props [by @tzi]
+    (Closes: #23827)
+  * Fix language selection in demo website [by @chippison] (Closes:
+    #23833)
+  * Fix possible archiving error "Column "referer_type" in WHERE is
+    ambiguous - in plugin Referrers" [by @sgiehl] (Closes: #23837)
+  * Discard invalid campaign names in tracker parameters to avoid
+    failures [by @sgiehl] (Closes: #23844)
+  * Add the option to include source maps to served files [by
+    @chippison] (Closes: #23857)
+  * Add additional check for refresh to make sure they are in the app
+    [by @caddoo] (Closes: #23878)
+  * Manage Live API Model Offset / Count / timeframe split correctly and
+    more memory efficient [by @sgiehl] (Closes: #23889)
+  * Fix invalid test by making provider method public [by @nathangavin]
+    (Closes: #23890)
+  * Normalise 4xx responses for invalid plugins/actions/assets and quiet
+    their logging [by @sgiehl] (Closes: #23891)
+  * Fix escaping in site selector tooltip [by @sgiehl] (Closes: #23899)
+  * Add archiving metrics code with timer [by @caddoo] (Closes: #23902)
+  * Add drag and drop for selected reports [by @chippison] (Closes:
+    #23913)
+  * Add helper text to promote the mediums in Scheduled reports [by
+    @lachiebol] (Closes: #23939)
+  * Add event-controllable warning message to compliance policy
+    descriptions [by @nathangavin] (Closes: #23940)
+  * Properly check idSite value when updating a segment [by @sgiehl]
+    (Closes: #23959)
+  * Gate proxy scheme headers behind config [by @sgiehl] (Closes:
+    #23968)
+  * Deprecate API.getSettings [by @sgiehl] (Closes: #23970)
+  * Fix DevicesDetection User-Agent double escaping [by
+    @letmefixthiscode] (Closes: #23977)
+  * Improve VisitFrequency API [by @sgiehl] (Closes: #23983)
+  * Improve marketplace loading speed [by @lachiebol] (Closes: #23984)
+  * Ensure regexes are handled correctly in excluded useragents [by
+    @sgiehl] (Closes: #23987)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:14:00 +0200
+
+matomo (5.6.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.6.2
+  * #23874, #23875:Fixed archiving that failed in Matomo 5.6.1 due to
+    the EnvironmentVariables plugin passing numeric config as string.
+    [by @sgiehl]
+  * #23879, #23880:Fixed issue where disabling period year on API leads
+    to exception while archiving in Matomo 5.6.1. [by @sgiehl]
+  * #23868:Improve rollup ranking queries. [by @sgiehl]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:05:50 +0200
+
+matomo (5.6.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.6.1
+  * Fix possible archiving error "Column "referer_type" in WHERE is
+    ambiguous - in plugin Referrers" [by @sgiehl] (Closes: #23837)
+  * #23827, #23824 Fix external themes that are using CSS custom props
+    [by @tzi]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 15:02:20 +0200
+
+matomo (5.6.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.6.0
+  * #23443: Extend the anonymisation settings to be site specific. [by
+    @michalkleiner]
+  * #22998, #23719: Fix warning on incompatible plugins when updating
+    Matomo to version 5.2.2. [by @michalkleiner, @sgiehl]
+  * #23688, #23711: Fix error after updating from Matomo 5.3.2:Entry
+    "Piwik\Plugins\FeatureFlags\FeatureFlagManager" cannot be resolved.
+    [by @sgiehl, @michalkleiner]
+  * #23557, #23685, #1052, #215, #1053: Corrected an issue that
+    prevented new users from completing the 2FA step. [by @sgiehl, @tzi,
+    @michalkleiner]
+  * #23693: Update the modal system to be responsive and centred with
+    intuitive scrolling. [by @tzi, @michalkleiner]
+  * #23713: Update the navbar help icon. [by @tzi, @sgiehl]
+  * #23733, #10562: Fix margins of controls for insight data table in
+    widgets. [by @tzi, @sgiehl]
+  * #23687: Fix QuickAccess input tooltip styles. [by @tzi, @sgiehl]
+  * #23741: Fix Ajax loader design and spacing. [by @tzi,
+    @michalkleiner]
+  * #23742: Improve layout for Matomo loader elements. [by @tzi,
+    @michalkleiner]
+  * #23756: Improve keyboard navigation in navbar, sidenav and top
+    controls. [by @tzi, @michalkleiner]
+  * #23655: Ensure compatibility with PHP 8.5. [by @sgiehl,
+    @michalkleiner]
+  * #23776: Replace Global minimum_mysql_version with adapter-specific
+    checks. [by @chippison, @caddoo, @sgiehl]
+  * #23615, #23677: In AI Assistants show the entry page URL / title as
+    a subtable. [by @sgiehl, @mneudert]
+  * #23617: Capture new metrics for AI Agent requests. [by @mneudert,
+    @sgiehl]
+  * #23717, #23731: Small layout improvements on Segment editor
+    dropdown. [by @tzi, @sgiehl, @michalkleiner]
+  * #23786, #20695: Remove the Row Evolution on the Behaviour >
+    Performance Reports. [by @chippison, @sgiehl]
+  * #23791: When creating a new custom dimension, the Active checkbox is
+    enabled by default. [by @chippison, @sgiehl]
+  * #23794: Simplify the Visitor Profile popup URL parameter. [by
+    @sgiehl, @michalkleiner]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 14:58:49 +0200
+
+matomo (5.5.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.5.2
+  * Properly escape transitions export overlay title [by @sgiehl]
+    (Closes: #23775)
+  * Fix AI referrer detection cache [by @sgiehl] (Closes: #23761)
+  * Fix superuser check in logme method [by @sgiehl] (Closes: #23754)
+  * Ensure to only invalidate segment for desired site [by @sgiehl]
+    (Closes: #23700)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 14:55:17 +0200
+
+matomo (5.5.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.5.1
+  * Show plugins update count asynchronously with 5 minute caching [by
+    @michalkleiner] (Closes: #23648)
+  * Secondary dimension in event report takes over the header [by
+    @sgiehl] (Closes: #23650)
+  * Do not update report title for secondary dimension reports [by
+    @sgiehl] (Closes: #23653)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 14:51:45 +0200
+
+matomo (5.5.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.5.0
+  * #23564, #19306: Migrate annotations to a dedicated database table.
+    [by @michalkleiner, @sgiehl]
+  * #22024, #23396: Fix incorrect archive recreation for periods without
+    visits. [by @sgiehl, @nathangavin, @mneudert]
+  * # 23530: Hide Install all plugins button when Marketplace is
+    disabled. [by @sgiehl]
+  * #23605: Add setReferralUrlMaxLength() to the JS Tracker to allow
+    limiting the referral cookie size. [by @MichaelRoosz, @sgiehl]
+  * #23573, #23611: Fix the Themes admin page to show available updates
+    (like the Manage Plugins page). [by @sgiehl]
+  * #22831, #23457: Introduced the new AI Assistants acquisition channel
+    type to categorise and analyse traffic originating from AI platforms
+    such as ChatGPT, Le Chat, Perplexity and more. [by @sgiehl]
+  * #23449, #23450: Reordered sections in the Dashboard selector to
+    first display the Manage Dashboard and Create new Dashboard options.
+    [by @michalkleiner]
+  * #23571: A new config_id randomisation setting is now available
+    available as an optional privacy control that must be explicitly
+    enabled by the user. Learn more about how to enable the randomise
+    config_id setting. [by @michalkleiner]
+  * #20826, #23520: When a user invites another person to join Matomo,
+    the invite acceptance notification is now in the inviters language
+    to ensure the confirmation is localised consistently. [by
+    @michalkleiner]
+  * #23575: Disabled the Superuser checkbox in Users > Permissions when
+    a superuser edits their own account. This prevents accidental self-
+    revocation of all access. [by @snake14, @sgiehl]
+  * #23582, #23622: Refactor the token notification system to
+    consolidate messages and send a single email per user that includes
+    details for all their tokens. [by @michalkleiner, @caddoo]
+  * #23578: Correctly escape line breaks in CSV and TSV exports so that
+    files can be reliably imported into tools like Excel. [by @sgiehl]
+  * #23535: Rename the Email Reports menu and table title to Schedule
+    Reports. [by @AltamashShaikh, @sgiehl]
+  * #23569: Make segment help texts translatable. [by @sgiehl,
+    @michalkleiner]
+  * #23581: Translations in token emails are currently HTML-escaped,
+    causing encoded entities to appear instead of the correct
+    characters. This issue removes the escaping so the text renders
+    properly. [by @sgiehl, @nathangavin, @michalkleiner]
+  * #1035: Fixed reference check when importing a previous container
+    version to overwrite the current container draft. [by
+    @AltamashShaikh]
+  * #1041: Reorder action icons to ensure the delete icon is displayed
+    last. [by @AltamashShaikh]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 14:48:17 +0200
+
+matomo (5.4.0-1) stable; urgency=high
+
+  * Releasing Matomo 5.4.0
+  * #19961, #23400: Superusers can enforce strong password requirements
+    to improve account security and reduce the risk of brute-force
+    attacks. [by @michalkleiner, @nathangavin]
+  * #23356: Password input fields now automatically clear after 10
+    minutes of inactivity by default, reducing the risk of leaving
+    sensitive data exposed. Developers can configure the timeout per
+    field instance if needed. [by @michalkleiner, @caddoo]
+  * #19839, #23294: Users are prevented from using their current
+    password to set a new password. [by @sgiehl, @nathangavin]
+  * #23425, #20102: A new scheduled task notifies superusers of accounts
+    inactive for 180 days, and improvements to the password reset
+    process prevent user enumeration by standardising error messages.
+    [by @michalkleiner]
+  * #13654, #23320: Improved the password reset process to prevent
+    possible user enumeration. [by @caddoo, @michalkleiner]
+  * #23330: Improved usability by adding automatic focus to password
+    confirmation fields. [by @michalkleiner, @sgiehl]
+  * #20677, #23335: The API now supports passing authentication tokens
+    via the standard Authorization: Bearer token HTTP header. [by
+    @sgiehl, @caddoo]
+  * #23354: Token authentication has been improved with new expiry and
+    notification features. [by @michalkleiner, @caddoo, @nathangavin]
+  * #12278, #23321: Resolved an issue that could expose internal server
+    IPs in redirect headers. [by @nathangavin, @mneudert]
+  * #19480, #23317: Replaced ssl:// with tls:// in HTTP connections to
+    strengthen security. [by @sgiehl, @michalkleiner]
+  * #23318: Migration details during core updates are now protected by a
+    token, ensuring only the user performing the update (or someone with
+    the token) can view them. [by @mneudert, @sgiehl]
+  * #23324: Improved security by hiding sensitive parameters from stack
+    traces on PHP 8.2+. [by @sgiehl]
+  * #23304: Matomo now logs a warning for insecure HTTP requests when
+    force_ssl is active. [by @sgiehl]
+  * #3620, #23372: Error and exception handling has been restructured to
+    improve security and clarity. Stack traces are now only shown when
+    explicitly enabled or in development mode, file system paths to the
+    Matomo root are redacted, and sensitive values are removed from
+    exception messages. The error page shown for unsupported PHP
+    versions or missing Composer has also been improved. [by @sgiehl,
+    @michalkleiner]
+  * #23352: Improved security by redacting SMTP credentials from logs
+    and error traces. [by @sgiehl, @mneudert]
+  * #23385: Password confirmation fields now support custom IDs,
+    avoiding duplicate IDs when multiple password forms appear on the
+    same page and improving accessibility. [by @michalkleiner, @sgiehl]
+  * #23503: Updated the opt-out form to use event listeners instead of
+    inline onclick attributes, improving compatibility with stricter
+    Content Security Policies. [by @heikojansen, @michalkleiner,
+    @mneudert]
+  * #23451: Requesting row evolution for flattened Page URL reports is
+    now automatically redirected to subtable row evolution to avoid
+    excessive memory usage. [by @sgiehl, @caddoo]
+  * #23505, #23506: The Hits metric is now available in the evolution
+    graph. [by @sgiehl, @mneudert]
+  * #21664, #23271: Goal reports now include a breakdown of conversions
+    by individual social networks. [by @sgiehl]
+  * #23347: Added a new API parameter show_dimensions that allows multi-
+    level reports to display each dimension in separate columns when
+    using flat=1. [by @sgiehl, @caddoo]
+  * #23456: Introduced a new copy component that enables duplicating
+    reports and other entities such as Heatmaps. This feature will be
+    extended to additional report types in future releases. [by
+    @snake14, @mneudert]
+  * #23299: The and string in the Goal overview top dimensions is now
+    translatable, ensuring full localisation support. [by @sgiehl,
+    @caddoo]
+  * #23291: Updated url_query_parameter_to_exclude_from_url to include
+    LinkedIn clickID, preventing these parameters from appearing in Page
+    URL reports. [by @AltamashShaikh, @sgiehl]
+  * #19060, #23315: Resolved low-risk issue where the configuration
+    option for email reports now prevents showing the report owners
+    username in the Reply-To header. [by @sgiehl, @michalkleiner]
+  * #23452, #23453: Include Campaign names in Transition reports when
+    either referer_keyword or referer_name is NULL. [by @peterbo,
+    @michalkleiner, @sgiehl]
+  * #23283, #23312: Fixed issue where ChatGPT visitors were showing in
+    campaigns. [by @sgiehl, @michalkleiner]
+  * #23417, #23448: Fixed eCommerce Overview comparisons that were
+    incorrect. [by @nathangavin, @michalkleiner]
+  * #23144: Remove token_auth from image graph urls in API response. [by
+    @sgiehl]
+  * #22450, #23421: New maintenance task added to clean up broken
+    archives and keep database storage healthy. [by @nathangavin,
+    @michalkleiner]
+  * #23408: Fix invalidation processing for report specific archives for
+    periods including today. [by @sgiehl, @michalkleiner]
+  * #23309: Respect ts_archived when purging ERROR/ERROR_INVALIDATED
+    archives [by @mneudert, @caddoo, @sgiehl]
+  * #23413: Ensure partial archives are marked correctly. [by @sgiehl,
+    @nathangavin]
+  * #23412: Metrics with zero values are now stored consistently,
+    improving archive completeness and ensuring exports include all
+    metrics. [by @sgiehl, @caddoo]
+  * #23277: Update styling and structure of the Create Measurable modal.
+    [by @spludlow, @michalkleiner, @sgiehl]
+  * #23488: Allow legacy/bc timezones when creating sites (through API).
+    [by @sgiehl]
+  * #23422: Allow filtering out sites by site types and allow selecting
+    only sites for which the user has at least write access. [by
+    @snake14, @sgiehl]
+  * #23496: Prevent rendering admin area when screen height or with is
+    below 200px. [by @sgiehl]
+  * #23264: Improve UI login screen. [by @james-hill-matomo, @sgiehl]
+  * #23274: Refined dashboard top bar with new icons and consistent
+    tooltips. [by @spludlow, @sgiehl]
+  * #23279: Adds code to accept editURL parameter in ContentBlock.vue to
+    link the title. [by @AltamashShaikh, @mneudert]
+  * #17451, #23268: Logo and favicon updates now only apply after
+    saving, as expected. [by @michalkleiner, @caddoo]
+  * #23429: Matomo shows a warning when the database version in use has
+    reached end of life. This works for both MySQL and MariaDB, which
+    now follow different versioning. [by @sgiehl, @michalkleiner,
+    @nathangavin]
+  * #23410: Remove CASE/WHEN around aggregate function in favour of a
+    simple boolean expression. [by @michalkleiner, @mneudert]
+  * #23220: Drop Flattr as a donation link option. [by @williamdes,
+    @sgiehl]
+  * #23261: Tweak regex for host checks. [by @michalkleiner, @mneudert]
+  * #23281: API responses using format=original now consistently return
+    the Content-Type: text/plain header instead of text/html. [by
+    @sgiehl, @caddoo]
+  * #23336: Fix creation of MySQL optimizer hint comments for multiple
+    hints. [by @mneudert, @sgiehl]
+  * #929, #1010: Add description for the History Change Trigger in
+    Matomo Tag Manager. [by @AltamashShaikh, @snake14]
+  * #989, #1019: Removed Save button from custom templates if a user
+    does not have access to edit custom templates. [by @AltamashShaikh]
+  * #1011, #852: The headers for Container Components, Tags, Triggers,
+    Variables, and Versions are now clickable, allowing quick access to
+    each section. [by @AltamashShaikh, @snake14]
+  * #1017: Adds the tooltip directive to the ContainerSelector to align
+    with upcoming changes that standardise tooltip behaviour across
+    dashboard headers. [by @spludlow, @snake14]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sat, 29 Aug 2026 14:02:27 +0200
+
+matomo (5.3.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.3.2
+  * If login is sent as an array, Matomo shows a proper error message
+    indicating that the login parameter must be a string. [by @sgiehl]
+    (Closes: #23117)
+  * Prevented email clients from automatically converting plain text
+    (e.g. URLs or emails) into clickable links. [by @sgiehl] (Closes:
+    #23248)
+  * Improve handling of prefixUrl parameter in API.listAllMethods. [by
+    @sgiehl] (Closes: #23247)
+  * Escaped tracked parameters before rendering in Real-time reports.
+    [by @sgiehl] (Closes: #23245)
+  * Ensure all translations required for Password Confirmation are
+    always loaded. [by @sgiehl] (Closes: #23176)
+  * Handled errors when accessing navigator.javaEnabled in matomo.js,
+    preventing issues caused by certain crawlers. [by @sgiehl] (Closes:
+    #23161)
+  * Ensure to discard campaign names with invalid type; only string
+    values are used. [by @sgiehl] (Closes: #23229)
+  * Prevent the concurrent deletion of multiple sites to ensure at least
+    one website always remains in the instance. [by @sgiehl] (Closes:
+    #23230)
+  * Prevent the warning message from displaying when no email is set for
+    the current user. [by @sgiehl] (Closes: #23228)
+  * Optimised region name lookup by reducing execution time and memory
+    usage. [by @mneudert] (Closes: #23235)
+  * Improved memory usage in Live.getLastVisitDetails. [by @mneudert]
+    (Closes: #23234)
+  * Updated URLs in code comments from HTTP to HTTPS. [by @sgiehl]
+    (Closes: #23072)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Mon, 13 Jul 2026 00:46:11 +0200
+
 matomo (5.3.1-2) stable; urgency=high
 
-  * Announce the rename to matomo-vanilla. This upgrade ships the same Matomo
-    5.3.1 with the same layout; it exists to carry the notice, and nothing
-    under the name matomo will follow it. Switching is done by asking for
-    matomo-vanilla by name.
-  * Refuse to install over a tree that Matomo's own updater has replaced:
-    dpkg would put the 5.3.1 files back in front of a database migrated
-    further. The refusal spells out the way to matomo-vanilla instead.
-  * Print a short reminder after each apt run until matomo-vanilla is
-    installed or /etc/matomo/rename-notice-acknowledged exists.
+  * Announce the rename to matomo-vanilla. This upgrade changes nothing on the
+    system: it ships the same Matomo 5.3.1 with the same layout, and exists only
+    to carry a notice that "apt upgrade" alone cannot reach past, since the new
+    name is a package apt will not install on its own.
   * Stop deleting /var/lib/matomo and /usr/share/matomo/config when the package
     is removed. Removal is not purge, and those hold the administrator's data.
-  * Leave the web server configuration alone on remove and purge once
-    matomo-vanilla is installed: it is the same configuration, in service.
-  * Drop the recommendation of php-geoip, which Debian no longer ships; Matomo
-    5 locates visitors with GeoIP 2 / DB-IP and its own bundled reader.
 
- -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 06 Oct 2026 23:30:00 +0200
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 04 Oct 2026 23:30:00 +0200
 
 matomo (5.3.1-1) stable; urgency=high
 

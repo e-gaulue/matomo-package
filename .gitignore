@@ -1,24 +1,43 @@
 .idea/
 *.sw?
 archives/*
+
+# Build trees and per-package debhelper state.
 debian/matomo
 debian/matomo.debhelper.log
 debian/matomo.substvars
 debian/matomo.*.debhelper
+debian/matomo-vanilla
+debian/matomo-vanilla.debhelper.log
+debian/matomo-vanilla.substvars
+debian/matomo-vanilla.*.debhelper
+debian/matomo-vanilla-logfile
+debian/matomo-vanilla-logfile.debhelper.log
+debian/matomo-vanilla-logfile.substvars
+debian/matomo-vanilla-logfile.*.debhelper
 debian/piwik
 debian/piwik.debhelper.log
 debian/piwik.substvars
 debian/piwik.*.debhelper
+debian/.debhelper/
 debian/files
+
 tmp/*
 tmp.*
-matomo
-matomo-*.tar.gz
-matomo-*.zip
-matomo-*.asc
-piwik
-piwik-*.tar.gz
-piwik-*.zip
-piwik-*.asc
-pubkey.asc
-debian/.debhelper/
+
+# The unpacked upstream tree and the archives it comes from, at the root of the
+# repository only. These patterns used to be unanchored, and a bare "matomo" line
+# makes git ignore *every* path component named matomo at any depth -- which
+# silently hid debian/.debhelper/generated/matomo/, and would just as silently hide
+# a file that mattered. Untracked files are not harmless here: githelp.sh refuses
+# to run "make commitrelease" when git status shows anything besides
+# debian/changelog.
+/matomo
+/matomo-*.tar.gz
+/matomo-*.zip
+/matomo-*.asc
+/piwik
+/piwik-*.tar.gz
+/piwik-*.zip
+/piwik-*.asc
+/pubkey.asc

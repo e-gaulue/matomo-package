@@ -1,0 +1,116 @@
+
+Template: piwik/automatic-upgrade
+Type: boolean
+Default: false
+_Description: Run Matomo's database migrations automatically?
+ This question is never put to you. The template exists so that an answer
+ given to the older piwik package can be read and carried over to
+ matomo/automatic-upgrade, which is the question actually asked.
+
+Template: matomo/automatic-upgrade
+Type: boolean
+Default: false
+_Description: Run Matomo's database migrations automatically?
+ Matomo's database schema has to be migrated from time to time, so that
+ Matomo keeps working once its code has been upgraded. This package can run
+ that migration for you, as part of the package upgrade that makes it
+ necessary.
+ .
+ Whichever you choose, take a database backup first and keep taking them: a
+ major version brings many migrations, and on a large database they can run
+ for a long time.
+ .
+ If enabled, the migration runs during this upgrade, and during every later
+ package upgrade that needs one.
+ .
+ If disabled, the migration is left to you after each package upgrade.
+ Matomo shows the queries it needs run in its own interface, and this
+ package prints the command that runs them.
+ .
+ You can change your answer later with: dpkg-reconfigure matomo-vanilla
+
+Template: matomo/upgrade_warning
+Type: boolean
+Default: false
+_Description: Continue with this major version upgrade?
+ The package installed here is older than Matomo 5, which its developers
+ treat as a major version: the upgrade brings a large number of database
+ migrations.
+ .
+ If you do not continue, the installation stops here. Nothing on this system
+ is changed, and the upgrade will still be waiting whenever you come back to
+ it.
+ .
+ Before continuing, take a database backup and make sure you know how to
+ restore it. The migrations are run by PHP, with this command, and you may
+ have to look into a failure and run it again:
+ .
+ php /usr/share/matomo/console core:update
+
+Template: matomo-vanilla/archiving-keep-cron
+Type: boolean
+Default: true
+_Description: Keep archiving reports from your existing cron job?
+ Report archiving is running on this system from /etc/cron.d/matomo-archive,
+ a file this package no longer ships: archiving is a systemd timer now,
+ matomo.timer.
+ .
+ Keeping the cron job changes nothing about how archiving runs today. The
+ file is put back where it is, with your schedule and your options
+ untouched, and the timer is installed but left inactive. You can switch
+ over whenever you like with: systemctl enable --now matomo.timer
+ .
+ Switching to the timer hands the schedule to systemd, which also records
+ each run in the journal. If your cron line carried options -- an explicit
+ --url, typically -- carry them over yourself: your old file is kept beside
+ the new one as /etc/cron.d/matomo-archive.dpkg-bak, and options belong in a
+ drop-in rather than in the unit.
+
+Template: matomo-vanilla/archiving-enable-timer
+Type: boolean
+Default: true
+_Description: Enable automatic report archiving?
+ Matomo computes its reports in the background, and will not show much until
+ that runs. This package provides it as a systemd timer, matomo.timer, which
+ runs hourly.
+ .
+ Enabling it here is safe on a fresh installation: until Matomo has been set
+ up through its web installer, each run is skipped rather than failed, and
+ archiving begins on its own once the setup is finished.
+ .
+ If you would rather drive archiving yourself -- from your own cron job, or
+ not at all -- decline, and nothing is enabled. The timer stays available:
+ systemctl enable --now matomo.timer
+
+Template: matomo-vanilla/archiving-decision
+Type: string
+Default: none
+Description: for internal use; which archiving question applied
+ Not a question: the config script records here which of the archiving questions
+ the state of this system called for, and the postinst reads it to know which
+ answer to act on.
+ .
+ It cannot be worked out from the answers themselves. Preseeding marks a question
+ as seen, which is its whole purpose, so "has this been seen" says nothing about
+ which question was actually put -- a preseeded answer to a question that did not
+ apply would otherwise be acted upon.
+
+
+Template: matomo-vanilla/webserver-alias
+Type: boolean
+Default: false
+_Description: Serve Matomo at /matomo on every site of this web server?
+ The package gives the web server access to /usr/share/matomo but does not
+ publish it by itself. Accepting here adds an alias so that http://<any site on
+ this server>/matomo/ answers immediately -- Apache through the conf-enabled
+ snippet matomo-alias.conf, lighttpd through its conf-enabled/50-matomo.conf.
+ .
+ Consider what that opens. Until you have completed Matomo's web installer,
+ anyone who can reach this server can open that address and run the installer
+ themselves, including creating the administrator account. On a server
+ reachable from the Internet, decline, and either complete the installer
+ right after this, or give Matomo a virtual host of its own.
+ .
+ Declining changes nothing. The alias can be enabled later with
+ "a2enconf matomo-alias" (Apache) or "lighty-enable-mod matomo" (lighttpd),
+ or by answering again: dpkg-reconfigure matomo-vanilla.

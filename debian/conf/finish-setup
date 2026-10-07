@@ -1,0 +1,72 @@
+#!/bin/sh
+# Finish setting Matomo up after the files are in place: regenerate the web server
+# protection files, and migrate the database if the administrator asked for that.
+#
+# Kept in a script of its own, outside /usr/share/matomo, so that the postinst stays
+# readable and the work can be run by hand with the same arguments.
+#
+# $1 -- "true" when the administrator enabled automatic database upgrades.
+
+set -e
+
+AUTO=${1:-false}
+CONSOLE=/usr/share/matomo/console
+# Where this package reads the configuration: /etc/matomo, reached by Matomo through
+# PIWIK_USER_PATH/config -- /var/lib/matomo/config, a symlink. NOT
+# /usr/share/matomo/config, which is upstream's own directory now and holds
+# global.ini.php rather than this installation's settings.
+CONFIG=/etc/matomo/config.ini.php
+
+[ -e "$CONFIG" ] || {
+	echo "  * Go to /etc/matomo and finish the Apache or NGINX configuration, then"
+	echo "    visit the site to finish installing Matomo."
+	exit 0
+}
+
+# Regenerating the .htaccess files to match the installed version. Harmless on
+# nginx, as upstream documents.
+echo "  * Please wait while Matomo refreshes its web server protection files..."
+echo "    (cf. https://matomo.org/faq/troubleshooting/how-do-i-fix-the-error-private-directories-are-accessible/)"
+php "$CONSOLE" core:create-security-files
+
+if [ "$AUTO" = "true" ]; then
+	echo "  * Please wait while Matomo upgrades the database..."
+	php "$CONSOLE" core:update --yes
+	# Second pass, deliberately, since 5.9.0. That release activates the AIAgents
+	# plugin through a migration, and the plugin carries a log_visit.ai_agent_name
+	# column. core:update decides what to install before running any migration, and
+	# it enumerates dimensions from the plugins activated at that moment, so a
+	# plugin activated by the very pass being executed never gets its columns.
+	# Tracking then fails with "Unknown column 'ai_agent_name'" while the updater
+	# reports success -- and the tracker endpoint does not raise the "Database
+	# Upgrade Required" screen a UI visitor would get. Each run clears its caches at
+	# startup, so a second pass sees the plugin and adds the column. Reported
+	# upstream. Remove this once core:update installs the columns of a plugin it
+	# activates; check on each new release and drop it then.
+	php "$CONSOLE" core:update --yes
+else
+	echo "  * To finish Matomo's upgrade, run this twice:"
+	echo "       /usr/bin/php /usr/share/matomo/console core:update"
+	echo "    The second pass is not redundant: a plugin activated by the first one only"
+	echo "    gets its database columns on the next, and tracking fails until it does."
+fi
+
+# Hand the cache back to the web server. Everything above runs php as root, and php
+# creates what it needs as it goes: compiled Twig templates, the dependency-injection
+# container, the tracker caches. Those land under PIWIK_USER_PATH/tmp owned by root,
+# inside a tree that belongs to www-data -- and a directory owned by root is one the
+# web server cannot write into, so it can no longer recompile a template whose source
+# has changed or refresh a cache it has outgrown.
+#
+# So this runs last, after the php work rather than before it, which is why it is not
+# left to the postinst's own permissions block. dpkg-statoverride is honoured, as it
+# is there: an administrator who has set their own ownership keeps it.
+if [ -d /var/lib/matomo/tmp ] \
+   && ! dpkg-statoverride --list /var/lib/matomo/tmp >/dev/null 2>&1; then
+	# Cache files come and go while this runs on a busy site, which would otherwise
+	# report a failure that is not one.
+	chown -R www-data:www-data /var/lib/matomo/tmp 2>/dev/null || true
+fi
+
+echo "  * If upgrading, visit index.php?module=Installation&action=systemCheckPage to"
+echo "    review your plugins."

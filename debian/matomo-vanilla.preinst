@@ -1,0 +1,390 @@
+#!/bin/sh
+set -e
+
+. /usr/share/debconf/confmodule
+
+# This script is the only gate that gets a look at the installation before
+# anything is touched, so every check that could refuse the operation lives here.
+#
+# When this package replaces the announcement version of matomo (1:5.3.1-2, the one
+# it Conflicts with), apt has already removed that package by the time this runs, so
+# there is no tree left to inspect -- and none is needed: that version checked the
+# installation on its way in. What this script still meets is everything else: a
+# tree nobody packaged, Debian's own matomo, and this repository's older versions,
+# which have to go through the announcement first.
+#
+# Rules this script follows:
+#   - it never modifies anything: it either lets the installation proceed or
+#     exits non-zero, which makes dpkg abort before unpacking a single file;
+#   - it says what it found, and what to do about it, not just that it refused;
+#   - it is silent when the installation is the one this package shipped.
+
+ACK=/etc/matomo/vanilla-takeover-acknowledged
+
+# Upstream version of the Matomo code sitting in /usr/share/matomo, empty when
+# there is none. Matches "public const VERSION = '5.14.0';" and older spellings.
+code_version() {
+	[ -r /usr/share/matomo/core/Version.php ] || return 0
+	sed -n "s/.*[[:space:]]VERSION[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" \
+		/usr/share/matomo/core/Version.php | head -1
+}
+
+# Version of package $1, but only while it still owns files on disk: "ii"
+# installed, "iF" half-configured -- the state the matomo package is in when we
+# run, apt having just deconfigured it for our Breaks -- "iU" unpacked, "iH"
+# half-installed. Any other state ("rc": removed, conffiles kept; "un": unknown)
+# means its files are already gone and there is nothing left to guard.
+# The version of the package that owns the tree, empty if no package does.
+#
+# Which package owns the tree, asked of dpkg's file lists.
+#
+# Not asked of package status, which cannot answer it: dpkg writes the package being
+# installed into the status area -- its new version, a half-installed status and the
+# reinst-required flag -- BEFORE running this script. Read from status, matomo-vanilla
+# upgrading itself looks either like a stranger owning the tree or like nobody owning
+# it, depending on how the abbreviation is matched, and both readings refuse an ordinary
+# version upgrade. The file list is not rewritten until unpacking, so it still names the
+# package actually installed.
+tree_owner() {
+	[ -e /usr/share/matomo/core/Version.php ] || return 0
+	dpkg -S /usr/share/matomo/core/Version.php 2>/dev/null \
+		| head -1 | cut -d: -f1 | cut -d, -f1 | tr -d ' '
+}
+
+# The version of a package other than the one being installed. Safe to read from status
+# for those: dpkg has not touched their entry.
+owning_version() {
+	dpkg-query -W -f='${db:Status-Abbrev} ${Version}\n' "$1" 2>/dev/null \
+		| awk '$1 ~ /^i[iFUH]/ { print $2; exit }'
+}
+
+# Upstream part of a Debian version: drop epoch, revision, and any +dfsg/~rc suffix.
+upstream_of() {
+	echo "$1" | sed -e 's/^[0-9]*://' -e 's/-[^-]*$//' -e 's/[+~].*$//'
+}
+
+# Lines passed to stop() are printed one per argument, so multi-line advice is
+# spelled out as separate arguments rather than a single string with newlines.
+BACKUP_1="Whatever you decide, take a copy first:"
+BACKUP_2="    tar czf ~/matomo-before-vanilla.tar.gz /etc/matomo /usr/share/matomo"
+BACKUP_3="    mysqldump --single-transaction <database> > ~/matomo-before-vanilla.sql"
+
+# Is the package that owns this tree ours, or Debian's? The discriminator is the apt
+# keyring: this repository's package installs one for its own repository -- in
+# /etc/apt/trusted.gpg.d up to 5.3.1, in /usr/share/keyrings from matomo-vanilla -- which is
+# irregular enough that we carry a lintian override for it, and which Debian's own
+# package cannot ship for a third-party repository. More reliable than comparing
+# version strings, where Debian's "5.8.0-1" is indistinguishable from one of ours.
+tree_is_ours() {
+	{ dpkg -S /etc/apt/trusted.gpg.d/matomo-keyring-automatic.gpg 2>/dev/null;
+	  dpkg -S /usr/share/keyrings/matomo-archive-keyring.gpg 2>/dev/null; } \
+		| cut -d: -f1 | grep -qx "${1:-matomo}"
+}
+
+stop() {
+	echo ""
+	echo "  * STOPPING. matomo-vanilla has not been installed and nothing on this"
+	echo "    system has been changed."
+	echo ""
+	while [ $# -gt 0 ]; do
+		if [ -z "$1" ]; then echo ""; else echo "    $1"; fi
+		shift
+	done
+	echo ""
+	echo "    The full migration notes are at https://debian.matomo.org/"
+	echo ""
+	echo "    If you have read the above, taken your backups and want this package to"
+	echo "    take the tree over as it is, say so explicitly and install again:"
+	echo "        touch $ACK"
+	echo ""
+	exit 1
+}
+
+CODE=$(code_version)
+SELF=${DPKG_MAINTSCRIPT_PACKAGE:-matomo-vanilla}
+OWNER=$(tree_owner)
+
+if [ -z "$OWNER" ]; then
+	OWNER_VERSION=
+elif [ "$OWNER" = "$SELF" ]; then
+	# Our own tree, which an ordinary version upgrade reaches every time. The version
+	# that is actually on disk is not the one in the status area -- that one is already
+	# the version being installed -- but the one dpkg passes as $2.
+	OWNER_VERSION=$2
+else
+	OWNER_VERSION=$(owning_version "$OWNER")
+fi
+
+# ---------------------------------------------------------------------------
+# The gate. It only has something to say when a Matomo tree is already there.
+# ---------------------------------------------------------------------------
+if [ -e "$ACK" ]; then
+	echo "  * $ACK exists: skipping the installed-tree checks as instructed."
+# A tree is "there" when its core/Version.php is: that is the file every check below
+# reads, and a Matomo without it is not one. Directories alone prove nothing --
+# removing a package leaves behind what it did not ship, and Matomo writes its own
+# .htaccess protection files into core/, config/ and others when the package is set
+# up, so the skeleton of a removed installation always remains.
+elif [ -n "$CODE" ]; then
+
+	# 1. A tree nobody packaged. Taking it over would mean adopting files we
+	#    cannot account for, and dpkg would later remove them as ours.
+	if [ -z "$OWNER" ]; then
+		stop "/usr/share/matomo holds a Matomo installation (version ${CODE:-unknown}) that" \
+		     "no package owns: it was unpacked by hand, or its package was removed while" \
+		     "the files stayed behind." \
+		     "" \
+		     "Move it aside, then install again:" \
+		     "    mv /usr/share/matomo /usr/share/matomo.before-vanilla" \
+		     "" \
+		     "Your database and /etc/matomo are untouched by that move, and a fresh" \
+		     "install will find them again."
+	fi
+
+	# 2. A tree owned by a package that is not this repository's -- Debian's own
+	#    matomo, or this name as Debian ships it after apt substituted one for the
+	#    other back when the two shared a name.
+	#
+	#    This stands on its own and comes before anything about the tree's shape,
+	#    because a Debian installation that has not been configured yet looks entirely
+	#    ordinary: no configuration anywhere, the code at exactly the version its
+	#    package claims. Who owns the tree is the only thing that tells them apart.
+	if [ -n "$OWNER" ] && ! tree_is_ours "$OWNER"; then
+		stop "This installation does not come from debian.matomo.org: package $OWNER," \
+		     "version $OWNER_VERSION, owns /usr/share/matomo." \
+		     "" \
+		     "This package will not install over it, and it is not a migration path. The" \
+		     "two are different products: Debian's replaces Matomo's bundled libraries" \
+		     "with Debian ones and follows the Debian release cycle, with Debian's" \
+		     "security support behind it. This one ships Matomo as upstream releases it" \
+		     "and follows upstream. Neither is a better answer for everyone, and" \
+		     "switching is a decision, not an upgrade." \
+		     "" \
+		     "If you have read that and still want to switch, do it deliberately and in" \
+		     "this order, at your own risk:" \
+		     "" \
+		     "  1. keep a copy of your database AND of your configuration file, outside" \
+		     "     /usr/share/matomo:" \
+		     "         mysqldump --single-transaction <database> > ~/matomo-db.sql" \
+		     "         cp -a /etc/matomo/config.ini.php ~/config.ini.php.kept" \
+		     "     (Debian's package may keep it in /usr/share/matomo/config instead --" \
+		     "      copy whichever of the two exists.)" \
+		     "  2. remove Debian's package yourself: apt remove --purge $OWNER" \
+		     "  3. install this one, then put your configuration file into /etc/matomo and" \
+		     "     point it at your database." \
+		     "" \
+		     "If Debian's package is the one you want, nothing here needs doing -- but take" \
+		     "debian.matomo.org out of your apt sources, or apt will keep offering you this" \
+		     "one and keep stopping here:" \
+		     "    grep -rl debian.matomo.org /etc/apt/sources.list /etc/apt/sources.list.d/" \
+		     "" \
+		     "None of that is tested here, and the schema the two packages expect can" \
+		     "differ: Debian 13 ships Matomo 5.3.1 while this repository follows upstream." \
+		     "Reattaching an older database to newer code is the part that can go wrong." \
+		     "Keep the backup."
+	fi
+
+	# 2b. One of this repository's own older versions, 4.16.1-1 to 5.3.1-1. They
+	#     have to pass through 1:5.3.1-2 first: that is the version whose prerm
+	#     no longer deletes /usr/share/matomo/config on removal, and the one that
+	#     refuses a tree replaced by Matomo's own updater. Installing over them
+	#     directly would end in dpkg's file-overwrite error anyway; this says why.
+	if [ -n "$OWNER" ] && [ "$OWNER" != "$SELF" ] && tree_is_ours "$OWNER" \
+	   && [ -n "$OWNER_VERSION" ] && dpkg --compare-versions "$OWNER_VERSION" lt 1:5.3.1-2; then
+		stop "matomo $OWNER_VERSION from debian.matomo.org is installed. Bring it to its last" \
+		     "version first, which checks this installation and carries the notice about" \
+		     "the rename, then come back to this one:" \
+		     "    sudo apt upgrade" \
+		     "    sudo apt install matomo-vanilla" \
+		     "" \
+		     "That order matters: the version you have deletes /var/lib/matomo when it is" \
+		     "removed, and the next one does not."
+	fi
+
+	# 3. The code on disk must be the code the owning package installed. When it
+	#    is not, the tree was replaced outside dpkg: dpkg's file list no longer
+	#    describes what is there, so it cannot upgrade it correctly and would leave
+	#    files from the newer tree behind as untracked leftovers.
+	#
+	#    Checked BEFORE the shape of config and tmp, deliberately. An installation
+	#    replaced in place usually fails both tests at once, and the remedy here --
+	#    set the whole tree aside -- fixes the shape as well. Checking shape first
+	#    would hand out advice that only leads to this refusal on the next attempt.
+	#    It also means the two checks below now fire only on a tree dpkg still
+	#    recognises, which is Debian's matomo package rather than a one-click update.
+	if [ -n "$CODE" ] && [ -n "$OWNER_VERSION" ]; then
+		EXPECTED=$(upstream_of "$OWNER_VERSION")
+		if [ -n "$EXPECTED" ] && [ "$CODE" != "$EXPECTED" ]; then
+			stop "The Matomo code in /usr/share/matomo is not the code the package installed:" \
+			     "    package $OWNER says     $OWNER_VERSION (Matomo $EXPECTED)" \
+			     "    core/Version.php says   $CODE" \
+			     "" \
+			     "The files were replaced without dpkg knowing, almost certainly by Matomo's" \
+			     "own updater. dpkg still believes the tree is Matomo $EXPECTED, so it would" \
+			     "upgrade the files it knows about and silently leave behind every file that" \
+			     "Matomo $CODE added -- and Matomo's own integrity check would then report" \
+			     "them." \
+			     "" \
+			     "To see the extent of it:" \
+			     "    dpkg -V $OWNER" \
+			     "" \
+			     "$BACKUP_1" "$BACKUP_2" "$BACKUP_3" \
+			     "" \
+			     "The way out is to set the whole tree aside, not to restore the older one:" \
+			     "    mv /usr/share/matomo /usr/share/matomo.before-vanilla" \
+			     "then install again. This package then lays down a clean tree and finds" \
+			     "/etc/matomo and your database where it left them. Reinstalling $OWNER" \
+			     "instead would put Matomo $EXPECTED back over a database already migrated to" \
+			     "$CODE -- older code against a newer database -- and would still leave every" \
+			     "file Matomo $CODE added lying around untracked." \
+			     "" \
+			     "Two things to know before you move it:" \
+			     "  - your site is down between the move and the install, so pick your moment;" \
+			     "  - extensions this package installed are under /var/lib/matomo/plugins," \
+			     "    not in the tree, so they stay where they are. Only ones installed under" \
+			     "    the older matomo package sit in the tree; copy those back afterwards into" \
+			     "    /var/lib/matomo/plugins and they come up already enabled. A GeoIP database" \
+			     "    you had put in misc/ goes to /var/lib/matomo/geoip the same way."
+		fi
+	fi
+
+
+	# 4. The shape of /usr/share/matomo/config. This package now ships upstream's own
+	#    real directory there, and keeps this installation's configuration outside the
+	#    code tree -- PIWIK_USER_PATH, set in bootstrap.php, points at /var/lib/matomo,
+	#    whose config/ is a symlink to /etc/matomo. So config.ini.php has not moved;
+	#    the symlink has, out of the one directory Matomo's updater unpacks over.
+	#
+	#    Three shapes can be found here, and only one of them is a problem.
+	if [ -L /usr/share/matomo/config ]; then
+		# The layout this package used to ship. Converted below, once every check has
+		# passed -- removing a symlink destroys nothing, and /etc/matomo is untouched.
+		LINK=$(readlink /usr/share/matomo/config)
+		if [ "$LINK" != /etc/matomo ]; then
+			stop "/usr/share/matomo/config is a symlink to $LINK." \
+			     "" \
+			     "This package has only ever pointed it at /etc/matomo, so something else" \
+			     "set this up and this package does not know what depends on it. Point it" \
+			     "back, or move it aside, and install again:" \
+			     "    mv /usr/share/matomo/config /usr/share/matomo/config.before-vanilla" \
+			     "" \
+			     "Your configuration is expected at /etc/matomo/config.ini.php."
+		fi
+
+	elif [ -d /usr/share/matomo/config ] && [ -e /usr/share/matomo/config/config.ini.php ]; then
+		# A real directory holding the configuration. That is upstream's own layout, and
+		# also Debian's -- but this package resolves config.ini.php through
+		# PIWIK_USER_PATH, so a file sitting here would simply not be read, and Matomo
+		# would come up as though it had never been installed. Silent, so refused.
+		#
+		# Only an installation from this repository can reach here: check 2 above has
+		# already refused every tree owned by another package.
+		stop "Your configuration is at /usr/share/matomo/config/config.ini.php, which is" \
+		     "where Matomo's own updater puts it after unpacking a release over a packaged" \
+		     "installation." \
+		     "" \
+		     "This package reads it from /etc/matomo instead -- that path is unchanged, and" \
+		     "it is reached through /var/lib/matomo/config, outside the code tree, so that" \
+		     "the updater can never break it again. Left where it is, the file would not be" \
+		     "read at all and Matomo would come up as if it had never been installed." \
+		     "" \
+		     "This package will not move your configuration for you. Do it yourself, and" \
+		     "keep the original until Matomo answers correctly:" \
+		     "" \
+		     "$BACKUP_1" "$BACKUP_2" "$BACKUP_3" \
+		     "" \
+		     "    install -d -m 0775 -g www-data /etc/matomo" \
+		     "    cp -a /usr/share/matomo/config/config.ini.php /etc/matomo/" \
+		     "" \
+		     "then install again. If /etc/matomo/config.ini.php already exists, compare the" \
+		     "two before overwriting anything -- this package cannot know which is current."
+	fi
+
+	# 5. A tree owned by www-data means the web server can rewrite the PHP it
+	#    executes, which is how installations end up in the states above. This is
+	#    worth saying, but it is not a reason to refuse: nothing breaks.
+	if [ -d /usr/share/matomo ]; then
+		OWNERSHIP=$(stat -c '%U' /usr/share/matomo 2>/dev/null || echo unknown)
+		if [ "$OWNERSHIP" = "www-data" ]; then
+			# Spelling the command out here would trip lintian's
+			# recursive-privilege-change check on this very script, so it lives in
+			# README.Debian instead, which is where a reader can act on it anyway.
+			echo "  * NOTE: /usr/share/matomo belongs to www-data, so the web server can"
+			echo "    rewrite Matomo's own code. That is what lets Matomo's one-click updater"
+			echo "    run on a packaged installation, and it is why this package ships the"
+			echo "    updater disabled. Restoring root ownership of the tree is advisable;"
+			echo "    /usr/share/doc/matomo-vanilla/README.Debian says how."
+		fi
+	fi
+fi
+
+# ---------------------------------------------------------------------------
+# Matomo 5 is a major upgrade. Warn whoever is still on a 4.x or older package,
+# whichever of the two package names it carries.
+# ---------------------------------------------------------------------------
+if [ -n "$OWNER_VERSION" ] && dpkg --compare-versions "$OWNER_VERSION" lt 5; then
+	QUESTION="matomo/upgrade_warning"
+	db_fset ${QUESTION} seen false
+	db_input high ${QUESTION} || true
+	db_go
+	db_get ${QUESTION}
+	if [ "$RET" != "true" ]; then
+		echo "Your installation is unchanged."
+		exit 1
+	fi
+fi
+
+# ---------------------------------------------------------------------------
+# Piwik is now Matomo. Move a leftover Piwik configuration folder out of the way
+# so this package can deploy, and let the postinst copy config.ini.php across.
+# ---------------------------------------------------------------------------
+if [ "$1" = "install" ]; then
+	if [ -d "/etc/piwik" ] && [ ! -e "/etc/piwik.orig" ]; then
+		echo "  * Piwik is now Matomo. Matomo configuration files are stored in /etc/matomo/"
+		echo "  * Piwik has been previously installed on this system and its configuration folder"
+		echo "  * remains. We're moving Piwik configuration folder from '/etc/piwik' to '/etc/piwik.orig'"
+		echo "  * so this package can install correctly."
+		echo "  * Review the configuration changes accordingly."
+
+		mv "/etc/piwik" "/etc/piwik.orig"
+
+		OBSOLETE_CONFS="/etc/lighttpd/conf-available/50-piwik.conf /etc/apache2/conf.d/piwik.conf /etc/apache2/conf-available/piwik.conf"
+		for C in $OBSOLETE_CONFS; do
+			if [ -e "$C" ]; then
+				echo "  * Found obsolete configuration file related to Piwik in $C"
+			fi
+		done
+	fi
+fi
+
+# ---------------------------------------------------------------------------
+# Migration, and it comes LAST on purpose. Everything above can still refuse: the
+# tree checks, and the major-upgrade question whose default answer is "no". Placed
+# before them, this block would convert the tree and only then be told to stop,
+# leaving a half-converted layout behind a message saying nothing had changed.
+#
+# So: nothing on this system is modified until every refusal has had its chance.
+#
+# The old layout put a symlink at /usr/share/matomo/config pointing at /etc/matomo.
+# This package ships upstream's real directory there instead, so the symlink has to
+# go BEFORE dpkg unpacks -- otherwise dpkg follows it and writes upstream's
+# global.ini.php, manifest.inc.php and environment files straight into /etc/matomo,
+# on top of the administrator's directory. The preinst is the only script that runs
+# early enough.
+#
+# Removing a symlink destroys nothing: /etc/matomo and everything in it stays, and
+# that is where config.ini.php continues to be read from.
+# ---------------------------------------------------------------------------
+if [ -L /usr/share/matomo/config ]; then
+	echo "  * Converting the layout: /usr/share/matomo/config was a symlink to /etc/matomo,"
+	echo "    and is now upstream's own directory. Your configuration stays in /etc/matomo,"
+	echo "    reached through /var/lib/matomo/config -- outside the code tree, where"
+	echo "    Matomo's own updater cannot reach it."
+	rm -f /usr/share/matomo/config
+fi
+
+# The old tmp symlink goes with the package that shipped it. Caches only;
+# Matomo's path.tmp is now /var/lib/matomo/tmp.
+
+
+#DEBHELPER#

@@ -1,0 +1,167 @@
+# Matomo is a Web application that provide its needed javascript library, not as good as using debian ones but complying with their requested version
+matomo-vanilla: embedded-javascript-library please use libjs-excanvas [usr/share/matomo/libs/jqplot/excanvas.min.js]
+matomo-vanilla: embedded-javascript-library please use libjs-jquery [usr/share/matomo/node_modules/jquery/dist/jquery.min.js]
+matomo-vanilla: embedded-javascript-library please use libjs-jquery-mousewheel [usr/share/matomo/node_modules/jquery-mousewheel/jquery.mousewheel.js]
+matomo-vanilla: embedded-javascript-library please use libjs-jquery-ui [usr/share/matomo/node_modules/jquery-ui-dist/jquery-ui.min.css]
+matomo-vanilla: embedded-javascript-library please use libjs-jquery-ui [usr/share/matomo/node_modules/jquery-ui-dist/jquery-ui.min.js]
+matomo-vanilla: embedded-javascript-library please use libjs-raphael [usr/share/matomo/plugins/UserCountryMap/javascripts/vendor/raphael.min.js]
+
+# Matomo is a Web application that provide its needed php library, not as good as using debian ones but complying with their requested version
+matomo-vanilla: embedded-php-library please use libphp-pclzip [usr/share/matomo/vendor/matomo/decompress/libs/PclZip/pclzip.lib.php]
+matomo-vanilla: embedded-php-library please use libsparkline-php [usr/share/matomo/core/Visualization/Sparkline.php]
+matomo-vanilla: embedded-php-library please use libsparkline-php [usr/share/matomo/plugins/CoreVisualizations/Visualizations/Sparkline.php]
+matomo-vanilla: embedded-php-library please use libsparkline-php [usr/share/matomo/vendor/davaxi/sparkline/src/Sparkline.php]
+
+# Matomo is a Web application that provide its needed font, not as good as using debian ones but complying with their requested version
+matomo-vanilla: duplicate-font-file also in (fonts-wine) [usr/share/matomo/plugins/ImageGraph/fonts/tahoma.ttf]
+
+# Matomo core is GPL 3. Matomo rely on vendor libraries and try to verify their licence comply with the opensource Matomo nature.
+# For this package to get one day in the main debian repository, all licences should be mentionned in debian/copyright.
+matomo-vanilla: extra-license-file [usr/share/matomo/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/js/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/libs/Authenticator/LICENSE.md]
+matomo-vanilla: extra-license-file [usr/share/matomo/libs/jqplot/gpl-2.0.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/libs/Zend/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/misc/log-analytics/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/chroma-js/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/iframe-resizer/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/jquery/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/jquery-mousewheel/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/jquery.scrollto/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/jquery-ui-dist/LICENSE.txt]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/@materializecss/materialize/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/mousetrap/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/qrcodejs2/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/sprintf-js/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/node_modules/visibilityjs/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/plugins/TagManager/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/composer/ca-bundle/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/composer/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/composer/semver/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/davaxi/sparkline/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/geoip2/geoip2/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/lox/xhprof/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/cache/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/decompress/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/device-detector/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/doctrine-cache-fork/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/ini/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/matomo-php-tracker/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/network/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/matomo/searchengine-and-social-list/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/maxmind-db/reader/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/maxmind/web-service-common/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/monolog/monolog/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/opis/closure/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/pear/console_getopt/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/pear/pear_exception/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/php-di/invoker/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/php-di/php-di/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/php-di/phpdoc-reader/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/phpmailer/phpmailer/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/psr/container/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/psr/event-dispatcher/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/psr/log/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/console/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/deprecation-contracts/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/error-handler/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/event-dispatcher-contracts/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/event-dispatcher/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/http-foundation/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/http-kernel/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/monolog-bridge/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-ctype/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-iconv/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-intl-grapheme/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-intl-normalizer/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-mbstring/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-php73/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/polyfill-php80/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/service-contracts/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/string/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/symfony/var-dumper/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/szymach/c-pchart/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/tecnickcom/tcpdf/LICENSE.TXT]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/tedivm/jshrink/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/twig/twig/LICENSE]
+matomo-vanilla: extra-license-file [usr/share/matomo/vendor/wikimedia/less.php/LICENSE]
+
+# That is the aim of Matomo to provide an opensource tracker alternative to Google or others
+matomo-vanilla: privacy-breach-piwik (choke on: 'settrackerurl') [usr/share/matomo/js/piwik.js]
+matomo-vanilla: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/js/piwik.min.js]
+matomo-vanilla: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/matomo.js]
+matomo-vanilla: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/piwik.js]
+
+# Upstream ships misc/log-analytics/import_logs.py with "#!/usr/bin/python", while
+# its own README in the same directory states "Requirements: Python 3". The shebang
+# is upstream's inconsistency, and Debian has had no /usr/bin/python since Debian 11.
+#
+# Overridden rather than corrected, which departs from this package's usual rule, so
+# the reason belongs here. Correcting at the source only makes sense when the
+# correction holds -- and this one cannot. This package tolerates Matomo's own
+# updater: an administrator who enables it unpacks a fresh upstream release over
+# /usr/share/matomo, and every edit we had made to an upstream file is silently
+# reverted. Worse, the manifest entry we would have had to recompute for the edited
+# file then describes a file that no longer exists in that form, so Matomo's
+# integrity check starts reporting a discrepancy we created. An override is
+# permanent and visible; an edit to an upstream file is temporary and says nothing
+# when it vanishes.
+#
+# It also never mattered in practice. fixperms ships every file 0644, so the script
+# is not executable here and its shebang is never consulted. Matomo itself never
+# invokes it -- the sole mention in the PHP source is a comment. And the real-world
+# invocation is explicit anyway; the maintainer's own logrotate snippet reads:
+#     /usr/bin/python3 /usr/share/matomo/misc/log-analytics/import_logs.py --auth-config ...
+# Verified working that way. python3 is a Recommends for exactly this purpose.
+#
+# This had been "corrected" with a sed for years, on a file that was never
+# executable: the correction was cosmetic throughout.
+matomo-vanilla: unusual-interpreter /usr/bin/python [usr/share/matomo/misc/log-analytics/import_logs.py]
+
+# Matomo use it's own bug numbers
+matomo-vanilla: improbable-bug-number-in-closes
+
+# Matomo's caches, sessions and compiled templates live under /var/lib/matomo/tmp and
+# are written by the web server, so the postinst has to set ownership there -- and it
+# has to do it recursively, because files already created by a previous version are
+# below it. dpkg-statoverride is checked first, so an administrator who has chosen
+# their own ownership keeps it.
+#
+# The line number is deliberately NOT pinned. These overrides carried [postinst:20]
+# and friends, and the three commands moved to lines 31-33 the first time the script
+# was edited -- which turns a working override into a mismatched-override warning
+# plus the original tag, twice the noise for no reason. Same lesson as the
+# spelling-error-in-changelog override below: context that drifts is worse than no
+# context. The file is still named, so this cannot silence a recursive chown added
+# somewhere else.
+matomo-vanilla: recursive-privilege-change "chown -R" [postinst:*]
+matomo-vanilla: recursive-privilege-change "find /var/lib/matomo/tmp -type d -exec chmod" [postinst:*]
+matomo-vanilla: recursive-privilege-change "find /var/lib/matomo/tmp -type f -exec chmod" [postinst:*]
+
+# Rules added specifically for 4.1.0
+matomo-vanilla: script-not-executable [usr/share/matomo/vendor/wikimedia/less.php/bin/lessc]
+# Rules added for version 5.x 
+matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/error-handler/Resources/bin/extract-tentative-return-types.php]
+matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/error-handler/Resources/bin/patch-type-declarations]
+matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/var-dumper/Resources/bin/var-dump-server]
+
+
+# Temporary rule until moving to v5
+#matomo: missing-systemd-timer-for-cron-script [etc/cron.d/matomo-archive]
+
+
+# The changelog entries below the "Releasing Matomo X.Y.Z" line are a verbatim
+# transcription of upstream's release notes, scraped from matomo.org. Their
+# wording is upstream's, not the maintainer's, and lintian's misspelling list
+# regularly flags it (a doubled word in 5.5.0, "Allow to" in 5.7.0, ...).
+#
+# One override for the tag rather than one per occurrence: lintian only inspects the
+# *latest* changelog entry, so an override quoting a given sentence stops matching
+# at the next release and turns into a mismatched-override warning on every later
+# package. The narrow form would cost one override per release and one warning per
+# release after it. No context at all, so it cannot drift: lintian matches an
+# override without context against every instance of the tag.
+matomo-vanilla: spelling-error-in-changelog
+
+# Override the jquery-mousewheel embedded-library warning in Matomo 5.7.0
+matomo-vanilla: embedded-javascript-library please use libjs-jquery-mousewheel [usr/share/matomo/node_modules/jquery-mousewheel/jquery.mousewheel.min.js]

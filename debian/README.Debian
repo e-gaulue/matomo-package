@@ -1,3 +1,22 @@
+This package, and the two that share its name
+=============================================
+
+This is matomo-vanilla, from debian.matomo.org. It ships Matomo exactly as
+upstream releases it, bundled libraries included, and follows upstream's
+releases.
+
+Debian ships its own package, called matomo. It is built from the same
+upstream source but replaces Matomo's bundled libraries with Debian ones and
+follows the Debian release cycle rather than upstream's. Both install into
+/usr/share/matomo and can never be installed at the same time.
+
+Until Matomo 5.3.1 this package was also called matomo, and the collision was
+silent: apt would pick whichever of the two carried the higher version number,
+and could replace one with the other during an ordinary upgrade without saying
+anything. Distinct names make that choice yours. The last package published
+under the old name, matomo 1:5.3.1-2, only announces the rename; installing
+this package removes it, and once Matomo answers correctly you can purge it.
+
 Install
 =======
 
@@ -11,7 +30,11 @@ Install
 	-- to improve performance
 	GRANT FILE ON *.* TO matomo@localhost;
 
-3a- If you don't have any virtualhost, uncomment the Alias line in /etc/apache2/conf.d/matomo.conf
+3a- If you don't have any virtualhost, say yes to the package's question about
+serving Matomo at /matomo (dpkg-reconfigure matomo-vanilla asks it again), or
+enable the alias yourself: "a2enconf matomo-alias" on Apache, "lighty-enable-mod
+matomo" on lighttpd. Until you have completed the web installer, that address
+lets anyone who reaches the server set Matomo up, so do it right after.
 
 3b- If you operate with virtualhosts, do as follow
 	a) if you use a dedicated virtual host for your matomo
@@ -36,16 +59,151 @@ Install
 
 4 - Point your browser to your matomo URL
 
-5 - Follow the steps and provide the MariaDB / MySQL credential details when requested.
+5 - Follow the steps and provide the MariaDB / MySQL credential details when
+requested.
 
-6 - Add the given javascript code to your pages, ideally at the bottom of the html just before </body>
+6 - Add the given javascript code to your pages, ideally at the bottom of the
+html just before </body>
 
 See http://matomo.org/docs/installation/
 
-Cron job
-========
+Automatic archiving
+===================
 
-The Debian matomo package also provides a crontab file /etc/cron.d/matomo
-It's released commented out, but we highly recommend to uncomment it to make sure Piwik loads very fast.
+Archiving is driven by a systemd timer, matomo.timer, and the package asks
+whether to enable it rather than leaving you to remember. Which question it
+asks depends on what it finds running:
 
-See http://matomo.org/docs/setup-auto-archiving/
+  - archiving already running from a cron job: keep the cron job, or hand
+    over to the timer. Keeping it puts the file back exactly as it was, and
+    the timer stays inactive;
+
+  - nothing running: enable the timer now, or not;
+
+  - a timer already enabled, or a timer drop-in of your own under /etc:
+    nothing is asked and nothing is touched.
+
+Answering yes on a machine where Matomo has not been set up yet is safe: a
+run with nothing configured does nothing and reports success, and archiving
+begins by itself once you finish the web installer.
+
+To change your mind:
+
+	sudo dpkg-reconfigure matomo-vanilla
+	sudo systemctl enable --now matomo.timer     # or disable --now
+	systemctl list-timers matomo.timer
+
+What the timer archives: every site of this installation, which is what
+core:archive does on its own. It is all of them or none -- enabling the timer
+or not is the whole choice the package offers.
+
+Anything finer is a drop-in of your own, and it is upstream's options that do
+the work, not anything this package provides:
+
+	sudo systemctl edit matomo.service
+
+	[Service]
+	ExecStart=
+	ExecStart=/usr/bin/php /usr/share/matomo/console core:archive \
+	          --force-idsites=1,4
+
+  --force-idsites=LIST   archive only these site ids (comma separated)
+  --skip-idsites=LIST    archive everything except these
+  --skip-all-segments    leave segments alone
+  --url=URL              an explicit base URL, if the CLI needs one here
+
+Clearing ExecStart before setting it is required: without the empty assignment
+a drop-in adds a second command rather than replacing the first. The same
+mechanism is how matomo-vanilla-logfile duplicates the output into a file, so
+if you keep both drop-ins, yours wins and the log file stops being written --
+copy the tee from
+/usr/lib/systemd/system/matomo.service.d/10-logfile.conf into yours.
+
+
+Up to 5.3.1-1 this was /etc/cron.d/matomo-archive, shipped commented out. The
+file belongs to the matomo package, which is removed rather than purged when
+this one replaces it, so it stays on disk until you purge matomo. If its
+archiving line was active you were asked whether to keep it or to move to the
+timer; moving comments the line out, so that the two do not both archive.
+
+See https://matomo.org/faq/how-to/how-do-i-setup-auto-archiving-script-to-run-
+using-systemd-on-a-linux-system-instead-of-cron/
+
+Updating Matomo
+===============
+
+Matomo is updated by updating this package. Matomo's own one-click updater is
+off by default: this package sets
+
+	enable_auto_update = 0
+
+in /etc/matomo/common.config.ini.php. Matomo merges three files in order --
+upstream's config/global.ini.php from the code tree, then that one, then your
+own /etc/matomo/config.ini.php -- so this is a default, not a constraint.
+Anything you set in config.ini.php wins, and Matomo never writes to the file
+this package ships.
+
+The reason for the default: apt is in charge of the code, and the one-click
+updater would replace the files dpkg is responsible for. dpkg's record would
+stop describing what is on disk, and the next package upgrade would leave the
+two halves mixed.
+
+Turning it on
+-------------
+
+It is a legitimate choice, and the setting alone is not enough. Matomo also
+has to be able to write the code tree, which it cannot: /usr/share/matomo
+belongs to root. Both steps, in your own file:
+
+	sudo sed -i 's/^enable_auto_update *=.*/enable_auto_update = 1/' \
+		/etc/matomo/config.ini.php     # add the line if it is not there
+	sudo chown -R www-data:www-data /usr/share/matomo
+
+With the setting on and the ownership unchanged, Matomo stops before writing
+anything and names the directories it could not write ("Some folders are not
+writable. Please ensure the following folders are writable and try again:
+..."). Nothing is left half-updated -- but nothing is updated either, so do
+both or neither.
+
+Read "Ownership of /usr/share/matomo" below before you do: handing the tree to
+the web server is the part that carries a cost, and that section says what it
+is and how to undo it.
+
+If the updater has already been used on this installation, matomo-vanilla will
+refuse to install and will print what to do about it. It refuses before
+touching anything, so nothing is lost by trying.
+
+Ownership of /usr/share/matomo
+==============================
+
+The tree is meant to belong to root, not to the web server: Matomo is PHP, so
+a tree writable by www-data is a tree whose code the web server can rewrite.
+Only the few paths that Matomo genuinely writes to are handed over, and the
+postinst sets them. If you find the whole tree owned by www-data, from an
+older manual step or from enabling the one-click updater, put it back:
+
+	sudo chown -R root:root /usr/share/matomo
+	sudo dpkg-reconfigure matomo-vanilla
+
+The second command lets the postinst restore the handful of paths that do need
+to be writable. Directories you have set with dpkg-statoverride are left
+alone.
+
+Installing without apt
+======================
+
+No upgrade makes the switch: the name matomo stops at 1:5.3.1-2, which only
+announces it. Ask for the new name, once:
+
+	sudo apt install matomo-vanilla
+
+It replaces matomo 1:5.3.1-2 and keeps /etc/matomo, /var/lib/matomo and the
+database where they are. An older matomo from this repository is refused with
+the instruction to upgrade it first: up to 5.3.1-1 its prerm deletes
+/var/lib/matomo on removal, and 1:5.3.1-2 is the version that checks whether
+Matomo's own updater has replaced the tree.
+
+With dpkg alone:
+
+	sudo dpkg -r matomo
+	sudo dpkg -i matomo-vanilla_<version>_all.deb

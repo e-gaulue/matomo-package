@@ -1,0 +1,12 @@
+# Rotation for the archiving log this package brings back. Named after the package
+# rather than reusing the old matomo-log, which the transitional matomo package
+# withdraws: two packages must not claim the same conffile.
+/var/log/matomo/matomo-archive.log
+{
+	rotate 30
+	daily
+	missingok
+	notifempty
+	delaycompress
+	compress
+}

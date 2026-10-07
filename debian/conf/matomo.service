@@ -1,6 +1,20 @@
 [Unit]
 Description=Matomo Auto-Archiving
+Documentation=https://matomo.org/docs/setup-auto-archiving/
+After=network-online.target
+Wants=network-online.target
+# Archiving cannot work before Matomo has been set up through its web installer, which
+# is what writes this file. Without the condition, a timer enabled at install time would
+# run every hour against an installation that does not exist yet and report a failure
+# each time. A failed CONDITION is not a failure: systemd skips the run, and the first
+# run after the installer finishes simply works. That is what lets this package offer to
+# enable archiving instead of leaving it to be done by hand.
+ConditionPathExists=/etc/matomo/config.ini.php
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/php /path/to/matomo/console core:archive --url=https://example.com/matomo/
+User=www-data
+Nice=10
+# core:archive processes every site of this installation. If the CLI needs an explicit
+# base URL, add a drop-in overriding ExecStart with --url="https://matomo.example.org/".
+ExecStart=/usr/bin/php /usr/share/matomo/console core:archive

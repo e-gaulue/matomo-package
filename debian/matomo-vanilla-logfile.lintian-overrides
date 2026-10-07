@@ -1,0 +1,14 @@
+# Overrides for the optional log-file package. It ships two small files, so the only
+# thing lintian has to look at is debian/changelog -- which dh_installchangelogs puts
+# in every binary package -- and these are the same two the other binaries override
+# for the same file, for the same reasons.
+
+# Matomo uses its own bug numbers. The Closes entries in the transcribed upstream
+# changelog point at matomo-org/matomo issues, not at Debian bug reports, so their
+# numbering does not look like a Debian one and never will.
+matomo-vanilla-logfile: improbable-bug-number-in-closes
+
+# The changelog entries below each "Releasing Matomo X.Y.Z" line are a verbatim
+# transcription of upstream's release notes. Correcting their prose would mean the
+# changelog no longer says what upstream said, which is the one thing it is for.
+matomo-vanilla-logfile: spelling-error-in-changelog

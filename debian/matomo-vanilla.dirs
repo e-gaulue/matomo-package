@@ -1,0 +1,17 @@
+etc/matomo
+usr/share/matomo
+# Writable state, under PIWIK_USER_PATH (/var/lib/matomo). tmp_path defaults to
+# "/tmp", so Matomo's path.tmp resolves to /var/lib/matomo/tmp.
+var/lib/matomo/tmp/assets
+var/lib/matomo/tmp/cache/tracker
+var/lib/matomo/tmp/latest
+var/lib/matomo/tmp/logs
+var/lib/matomo/tmp/sessions
+var/lib/matomo/tmp/tcpdf
+var/lib/matomo/tmp/templates_c
+var/lib/matomo/misc/user
+# Extensions installed from the Marketplace. Owned by www-data in the postinst, and
+# the only place the web server may write code -- see debian/conf/bootstrap.php.
+var/lib/matomo/plugins
+# GeoIP 2 / DB-IP databases, downloaded by Matomo: path.geoip2, set in bootstrap.php.
+var/lib/matomo/geoip

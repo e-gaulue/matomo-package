@@ -2,20 +2,63 @@ Source: matomo
 Section: web
 Priority: optional
 Maintainer: Edouard Gaulué <edouard@e-gaulue.com>
-Build-Depends: debhelper (>=13), unzip
-Standards-Version: 3.8.0
+Build-Depends: debhelper-compat (= 13), unzip
+Standards-Version: 4.7.2
 
-Package: matomo
+Package: matomo-vanilla
 Architecture: all
 Homepage: http://matomo.org
-Pre-Depends: debconf (>= 1.5.71) | debconf-2.0
-Depends: php-cli, php-mysql|php-mysqlnd, php-curl, php-gd, php-xml, python3
-Recommends: logrotate, libapache2-mod-php|php-cgi|php-fpm, php (>= 8.0)
+Pre-Depends: ${misc:Pre-Depends}, debconf (>= 1.5.71) | debconf-2.0
+Depends: ${misc:Depends}, php-cli, php-mysql|php-mysqlnd, php-curl, php-gd, php-xml
+Recommends: libapache2-mod-php|php-cgi|php-fpm, php (>= 8.0), python3
 Suggests: mariadb-server | mysql-server, php-maxminddb, php-mbstring, libmaxminddb0
+# The one version of matomo this package replaces: 1:5.3.1-2, the last one published
+# under that name by this repository, which exists to announce the rename. Installing
+# this package removes it, and its maintainer scripts are the ones written for that --
+# nothing is deleted on remove, and the web server configuration is left in service.
+#
+# Deliberately nothing else. Earlier versions from this repository (4.16.1-1 to
+# 5.3.1-1) still carry a prerm that deletes /usr/share/matomo/config on removal, and
+# the announcement version is the one that checks whether the tree was replaced by
+# Matomo's own updater; so they have to pass through it first, and the preinst says so
+# rather than leaving it to dpkg's file-overwrite error. And nothing about the versions
+# Debian publishes under this name: a Conflicts there reads to apt as "resolve this for
+# me", and apt resolves it by removing Debian's package before this package's preinst
+# can see it, refuse, and explain. Saying nothing leaves it installed, which is what
+# lets the preinst do that, with dpkg's own overwrite check behind it.
+Conflicts: matomo (= 1:5.3.1-2)
+Replaces: matomo (= 1:5.3.1-2)
 Description: Leading Free/Libre open source Web Analytics software
- Matomo (formerly Piwik) is a full featured PHP MySQL software program that
+ Matomo is a full featured PHP MySQL software program that
  you download and install on your own webserver. At the end of the five minute
  installation process you will be given a JavaScript code. Simply copy and
  paste this tag on websites you wish to track and access your analytics reports
  in real time.
  .
+ This package ships Matomo as upstream releases it, bundled libraries included,
+ and follows upstream releases. Debian's own matomo package is a different
+ thing: its bundled libraries are replaced by Debian packages and its version
+ follows the Debian release cycle. Both install into /usr/share/matomo and
+ cannot coexist, which is why they now carry different names. Until Matomo
+ 5.3.1 this package was itself called matomo, and the collision was silent.
+
+Package: matomo-vanilla-logfile
+Architecture: all
+Section: web
+Depends: ${misc:Depends}, matomo-vanilla, logrotate
+Description: report archiving log file for matomo-vanilla
+ Writes the output of Matomo's report archiving run to
+ /var/log/matomo/matomo-archive.log, rotated daily and kept for
+ thirty days. That is where the matomo package from
+ debian.matomo.org put it, before Debian 12 stopped installing a
+ syslog daemon by default.
+ .
+ matomo-vanilla leaves that output to the journal alone, as a
+ package published today should: "journalctl -u matomo" shows it,
+ already rotated and already size-capped. This package is for
+ administrators whose own tooling reads the file, and it adds the
+ file rather than replacing the journal -- the run is recorded in
+ both.
+ .
+ It installs one systemd drop-in and one logrotate rule. Nothing
+ else changes, and removing it puts the service back as it was.

@@ -1,0 +1,4 @@
+# The source files are named after their installed names: dh_install copies, it does
+# not rename.
+debian/conf/10-logfile.conf			usr/lib/systemd/system/matomo.service.d/
+debian/conf/matomo-vanilla-logfile		etc/logrotate.d/

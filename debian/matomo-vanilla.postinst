@@ -1,0 +1,301 @@
+#!/bin/sh
+
+set -e
+
+
+# Check if the first argument is "abort-upgrade"
+if [ "$1" = "abort-upgrade" ]; then
+    exit 0
+fi
+
+# Source debconf library.
+. /usr/share/debconf/confmodule
+db_version 2.0 || { echo "$0: needs DebConf 2.0 or later"; exit 1; }
+
+# Permissions, for the three paths Matomo genuinely writes to. They all live outside
+# /usr/share/matomo now: PIWIK_USER_PATH, set in bootstrap.php, puts this
+# installation's writable state under /var/lib/matomo. Nothing in the code tree needs
+# to be writable by the web server any more, which is one fewer way for the process
+# serving the site to rewrite the code it runs.
+#
+# dpkg-statoverride is honoured throughout: an administrator who has set their own
+# ownership keeps it.
+
+# Caches, sessions and compiled templates. path.tmp resolves to PIWIK_USER_PATH plus
+# the tmp_path setting, which defaults to "/tmp" -- hence /var/lib/matomo/tmp, where
+# it used to be /var/lib/matomo/data/tmp.
+if ! dpkg-statoverride --list /var/lib/matomo/tmp >/dev/null; then
+	if [ -d /var/lib/matomo/tmp ]; then
+		# On a busy site cache files appear and disappear while these run, which would
+		# otherwise report a failure that is not one.
+		chown -R www-data:www-data /var/lib/matomo/tmp 2>/dev/null || true
+		find /var/lib/matomo/tmp -type d -exec chmod 755 {} \; 2>/dev/null || true
+		find /var/lib/matomo/tmp -type f -exec chmod 644 {} \; 2>/dev/null || true
+	fi
+else
+	echo "  * Skipped permission changes in /var/lib/matomo/tmp according to 'dpkg'"
+fi
+
+# Files an administrator uploads through the interface. Under PIWIK_USER_PATH too,
+# where it used to be /usr/share/matomo/misc/user -- inside the code tree.
+if ! dpkg-statoverride --list /var/lib/matomo/misc/user >/dev/null; then
+	if [ -d /var/lib/matomo/misc/user ]; then
+		chown root:www-data /var/lib/matomo/misc/user
+		chmod 0775 /var/lib/matomo/misc/user
+	fi
+else
+	echo "  * Skipped permission changes in /var/lib/matomo/misc/user according to 'dpkg'"
+fi
+
+# /etc/matomo has to be writable by the web server because Matomo's installer creates
+# config.ini.php there, and Matomo rewrites it whenever a plugin is enabled.
+#
+# The *.php glob is guarded now, and that is not cosmetic: this package used to ship
+# global.ini.php and three others into /etc/matomo, so the glob always matched. It
+# ships none of them any more, so on a fresh installation there is no .php file there
+# at all and an unguarded "chgrp www-data /etc/matomo/*.php" would hand chgrp a
+# literal asterisk and fail the postinst under set -e.
+if ! dpkg-statoverride --list /etc/matomo >/dev/null; then
+	chgrp www-data /etc/matomo
+	chmod 0775 /etc/matomo
+	for f in /etc/matomo/*.conf; do
+		[ -e "$f" ] || continue
+		chmod 0644 "$f"
+	done
+	for f in /etc/matomo/*.php; do
+		[ -e "$f" ] || continue
+		# common.config.ini.php is this package's own, and the web server only has to read it.
+		# Handing it to www-data group-writable would let the process serving the site
+		# edit the defaults meant to constrain it.
+		if [ "$f" = /etc/matomo/common.config.ini.php ]; then continue; fi
+		chgrp www-data "$f"
+		chmod 0664 "$f"
+	done
+else
+	echo "  * Skipped permission changes in /etc/matomo according to 'dpkg'"
+fi
+
+# Extensions installed from the Marketplace. This is the only directory where the web
+# server may write code, and it is deliberately not in /usr/share/matomo: Matomo loads
+# from here through MATOMO_PLUGIN_DIRS and installs here through
+# MATOMO_PLUGIN_COPY_DIR, both set in /usr/share/matomo/bootstrap.php. The code tree
+# stays owned by root, so the process serving the site cannot replace the code it runs.
+if ! dpkg-statoverride --list /var/lib/matomo/plugins >/dev/null; then
+	if [ -d /var/lib/matomo/plugins ]; then
+		chown -R www-data:www-data /var/lib/matomo/plugins
+		chmod 0755 /var/lib/matomo/plugins
+	fi
+else
+	echo "  * Skipped permission changes in /var/lib/matomo/plugins according to 'dpkg'"
+fi
+
+# GeoIP 2 / DB-IP databases, which Matomo downloads itself -- on request from the
+# GeoIp2 settings page, then monthly. path.geoip2 points here from bootstrap.php, so
+# that the code tree can stay root's.
+if ! dpkg-statoverride --list /var/lib/matomo/geoip >/dev/null; then
+	if [ -d /var/lib/matomo/geoip ]; then
+		chown www-data:www-data /var/lib/matomo/geoip
+		chmod 0755 /var/lib/matomo/geoip
+	fi
+else
+	echo "  * Skipped permission changes in /var/lib/matomo/geoip according to 'dpkg'"
+fi
+
+# A database that was placed in the code tree by hand -- misc/ is where upstream's
+# documentation says to put it, and where the previous package left room for nothing
+# else -- belongs to no package, so it survives the switch and sits where Matomo no
+# longer looks. Moved, once, to where it is looked for; an existing file there is
+# never overwritten.
+for db in /usr/share/matomo/misc/*.mmdb; do
+	[ -f "$db" ] || continue
+	name=$(basename "$db")
+	if [ -e "/var/lib/matomo/geoip/$name" ]; then
+		echo "  * /usr/share/matomo/misc/$name left alone: /var/lib/matomo/geoip/$name exists."
+		continue
+	fi
+	mv "$db" /var/lib/matomo/geoip/ && chown www-data:www-data "/var/lib/matomo/geoip/$name"
+	echo "  * GeoIP database moved: /usr/share/matomo/misc/$name -> /var/lib/matomo/geoip/"
+	echo "    That is where Matomo reads and updates it from now on."
+done
+
+if which lighty-enable-mod >/dev/null 2>&1 ;
+then
+	if [ ! -f /etc/lighttpd/conf-available/50-matomo.conf ];
+	then
+		ln -s /etc/matomo/lighttpd.conf /etc/lighttpd/conf-available/50-matomo.conf
+		invoke-rc.d lighttpd reload 2>/dev/null || true
+	fi
+	echo "  * Check Matomo web configuration in /etc/lighttpd/conf-available/50-matomo.conf"
+fi
+
+# debian 8 and above
+if [ -e /usr/share/apache2/apache2-maintscript-helper ];
+then
+	. /usr/share/apache2/apache2-maintscript-helper
+	if [ -e "/etc/apache2/conf.d/matomo.conf" ] && [ ! -e "/etc/apache2/conf-available/matomo.conf" ];
+	then
+		echo "  * Migrating previous '/etc/apache2/conf.d/matomo.conf' to '/etc/apache2/conf-available/matomo.conf'"
+		mv /etc/apache2/conf.d/matomo.conf /etc/apache2/conf-available/matomo.conf
+		# the conf is enabled since it was debian 7 default behavior
+		apache2_invoke enconf matomo.conf || exit $?
+	else
+		if [ ! -e /etc/apache2/conf-available/matomo.conf ];
+		then
+			ln -s /etc/matomo/apache.conf /etc/apache2/conf-available/matomo.conf
+			apache2_invoke enconf matomo.conf || exit $?
+		fi
+		echo "  * Check Matomo web configuration in /etc/apache2/conf-available/matomo.conf"
+	fi
+fi
+
+# The alias, only when asked for. "No" disables nothing: an alias the administrator
+# enabled by hand stays theirs, and the question says how to turn it off.
+db_get matomo-vanilla/webserver-alias || true
+if [ "$RET" = true ]; then
+	if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+		. /usr/share/apache2/apache2-maintscript-helper
+		if [ ! -e /etc/apache2/conf-available/matomo-alias.conf ]; then
+			ln -s /usr/share/matomo-vanilla/apache-alias.conf /etc/apache2/conf-available/matomo-alias.conf
+		fi
+		apache2_invoke enconf matomo-alias.conf || true
+		echo "  * Matomo is served at /matomo on every Apache site (conf-enabled/matomo-alias.conf)."
+	fi
+	if which lighty-enable-mod >/dev/null 2>&1 && [ -e /etc/lighttpd/conf-available/50-matomo.conf ]; then
+		lighty-enable-mod matomo >/dev/null 2>&1 || true
+		invoke-rc.d lighttpd reload 2>/dev/null || true
+		echo "  * Matomo is served at /matomo on lighttpd (conf-enabled/50-matomo.conf)."
+	fi
+	if [ ! -e /etc/matomo/config.ini.php ]; then
+		echo "    Finish the web installer now: until then, that address lets anyone who"
+		echo "    reaches this server set Matomo up."
+	fi
+fi
+
+# Piwik to Matomo configuration migration
+if [ -d "/etc/piwik.orig" ]
+then
+	if [ -e "/etc/piwik.orig/config.ini.php" ] && [ ! -e "/etc/matomo/config.ini.php" ]
+	then
+		echo "  * Copying Piwik configuration (/etc/piwik.orig/config.ini.php) to Matomo configuration folder (/etc/matomo/)"
+		cp -pd "/etc/piwik.orig/config.ini.php" "/etc/matomo/config.ini.php"
+	fi
+fi
+
+echo "  * Matomo main configuration files are stored in /etc/matomo/"
+echo "  * When installing/using matomo, make sure you disable any ads blocker"
+
+# Finishing the setup: regenerate the web server protection files, and migrate the
+# database if the administrator asked for that. The tree is coherent here: when this
+# package replaces the announcement version of matomo, apt removes that package
+# entirely before unpacking this one, so no file of an older release is left behind.
+db_get matomo/automatic-upgrade || true
+AUTO=${RET:-false}
+
+# A Ctrl+C at the terminal reaches this shell as well as php, so without the trap
+# the operator would see only dpkg's "subprocess was interrupted" and no way out.
+# This whole script re-runs on the retry, and everything above it is idempotent.
+if [ "$AUTO" = "true" ] && [ -e /etc/matomo/config.ini.php ]; then
+	echo "  * The database migration is part of this step. Interrupting it is safe --"
+	echo "    this will tell you how to resume -- but it is not reversible. If you have"
+	echo "    no copy of your configuration and database yet, press Ctrl+C now, take"
+	echo "    one, and resume with: sudo dpkg --configure matomo-vanilla"
+	echo "        sudo tar czf ~/matomo-before-vanilla.tar.gz /etc/matomo"
+	echo "        mysqldump --single-transaction <database> > ~/matomo-before-vanilla.sql"
+fi
+trap 'echo ""
+	echo "  * Interrupted. Nothing is lost -- Matomo records each migration step as it"
+	echo "    completes, so the retry picks up where this stopped. Resume with:"
+	echo "        sudo dpkg --configure matomo-vanilla"
+	echo "    or, equivalently, '"'"'sudo apt-get install -f'"'"'."
+	exit 130' INT TERM HUP QUIT
+/usr/share/matomo-vanilla/finish-setup "$AUTO"
+trap - INT TERM HUP QUIT
+
+# ---------------------------------------------------------------------------
+# Archiving. Which question applied was decided by the config script, which is the
+# only thing that can know: it ran before anything was unpacked, when the old cron
+# file was still in place to be looked at. It recorded its decision, and that is
+# what is read here.
+#
+# Not read from the "seen" flag of each question, which was the first attempt and
+# was wrong: preseeding a question marks it seen -- that is what preseeding is for
+# -- so a seeded answer to a question that did not apply would be acted upon. The
+# harness caught it: with both booleans seeded, the cron branch won every time and
+# the timer was never enabled.
+# ---------------------------------------------------------------------------
+DECISION=none
+if db_get matomo-vanilla/archiving-decision; then
+	DECISION=$RET
+fi
+
+ENABLE_TIMER=no
+KEEP_CRON=no
+case "$DECISION" in
+cron)
+	db_get matomo-vanilla/archiving-keep-cron || true
+	if [ "$RET" = true ]; then
+		KEEP_CRON=yes
+	else
+		ENABLE_TIMER=yes
+	fi
+	;;
+timer)
+	db_get matomo-vanilla/archiving-enable-timer || true
+	if [ "$RET" = true ]; then
+		ENABLE_TIMER=yes
+	fi
+	;;
+esac
+
+if [ "$ENABLE_TIMER" = yes ]; then
+	echo "  * Enabling automatic report archiving (matomo.timer), as you asked."
+	if command -v deb-systemd-helper >/dev/null 2>&1; then
+		deb-systemd-helper enable matomo.timer >/dev/null 2>&1 || true
+	fi
+	if command -v deb-systemd-invoke >/dev/null 2>&1; then
+		deb-systemd-invoke start matomo.timer >/dev/null 2>&1 || true
+	fi
+	if [ ! -e /etc/matomo/config.ini.php ]; then
+		echo "    Matomo is not set up yet, so each run is skipped until it is -- and the"
+		echo "    first run after you finish the web installer archives on its own."
+	fi
+	echo "    The console may need an explicit --url for your setup; that belongs in a"
+	echo "    drop-in: sudo systemctl edit matomo.service"
+elif [ "$KEEP_CRON" = yes ]; then
+	echo "  * Keeping your cron job for archiving, as you asked. The timer is installed"
+	echo "    and left inactive; switch over whenever you like:"
+	echo "       sudo systemctl enable --now matomo.timer"
+else
+	echo "  * Automatic report archiving is not enabled. The timer is installed and ready:"
+	echo "       sudo systemctl enable --now matomo.timer"
+fi
+
+# /etc/cron.d/matomo-archive was a conffile of the matomo package. That package is
+# removed, not purged, when this one replaces it, so dpkg leaves the file in place
+# until the administrator purges matomo. Nothing here ships it; what happens to it
+# follows the answer above.
+if [ -e /etc/cron.d/matomo-archive ]; then
+	case "$KEEP_CRON$ENABLE_TIMER" in
+	yesno)
+		echo "    /etc/cron.d/matomo-archive stays as it is. It belongs to the removed matomo"
+		echo "    package until you purge it; copy it under another name first if you do."
+		;;
+	noyes)
+		if grep -qE '^[[:space:]]*[^#[:space:]].*core:archive' /etc/cron.d/matomo-archive; then
+			# Commented out rather than deleted or renamed: the file is still a conffile of
+			# the removed package, which purges it cleanly later, and an edited copy is
+			# what the administrator would expect to find.
+			sed -i -e '/^[[:space:]]*[^#[:space:]].*core:archive/s/^/# disabled by matomo-vanilla, the timer archives now: /' \
+				/etc/cron.d/matomo-archive
+			echo "    The archiving line in /etc/cron.d/matomo-archive has been commented out,"
+			echo "    so that the timer and the cron job do not both archive. The file itself"
+			echo "    belongs to the removed matomo package and goes away when you purge it."
+		fi
+		;;
+	esac
+fi
+echo "    For more information read https://matomo.org/faq/how-to/how-do-i-setup-auto-archiving-script-to-run-using-systemd-on-a-linux-system-instead-of-cron/"
+
+#DEBHELPER#
+
+exit 0

@@ -1,0 +1,13 @@
+#
+# This installation's configuration. The link lives in /var/lib, OUTSIDE
+# /usr/share/matomo, which is the whole point: Matomo's own updater unpacks over the
+# code tree and used to replace the link that sat there with a real directory, which
+# is what broke this package. Here it is out of reach, and config.ini.php stays at
+# /etc/matomo where every existing installation already has it.
+etc/matomo							var/lib/matomo/config
+#
+# How a Marketplace extension's own JavaScript, CSS and images stay reachable over
+# HTTP while living outside the code tree. Matomo builds those URLs from
+# webrootDirRelativeToMatomo, set to "plugins-ext" in bootstrap.php. The link is the
+# second and last entry this package adds to /usr/share/matomo.
+var/lib/matomo/plugins						usr/share/matomo/plugins-ext

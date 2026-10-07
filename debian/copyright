@@ -1,32 +1,26 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
-Upstream-Name: piwik
-Upstream-Contact: Matthieu Aubry <matt@piwik.org>
-Source: http://piwik.org/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: matomo
+Upstream-Contact: Matomo <hello@matomo.org>
+Source: https://matomo.org/
+
+Files: *
+Copyright: © 2013-2026, The Matomo Team <hello@matomo.org>
+License: GPL-3+
+Comment: Matomo was published as Piwik until 2018; the copyright on the earlier
+ releases this history reaches back to was held under that name.
 
 Files: debian/*
 Copyright: © 2013, Aurelien Requiem <aurelien@requiem.fr>
+ © 2013, Fabrizio Regalli <fabreg@fabreg.it>
+ © 2013-2026, Edouard Gaulué <edouard@e-gaulue.com>
 License: GPL-3+
-
-Files: debian/piwik.cron.d debian/conf/lighttpd.conf debian/docs
-Copyright: © 2013, Fabrizio Regalli <fabreg@fabreg.it>
-License: GPL-3+
-
-Files: debian/postrm debian/prerm
-Copyright: © 2013, Fabrizio Regalli <fabreg@fabreg.it>, Aurelien Requiem <aurelien@requiem.fr>
-License: GPL-3+
-
-Files: debian/README.Debian debian/control debian/lintian-overrides debian/templates debian/substvars
-Copyright: © 2013, Aurelien Requiem <aurelien@requiem.fr>, Edouard Gaulué <edouard@e-gaulue.com>
-License: GPL-3+
-
-Files: debian/conf/apache.conf debian/install debian/postinst
-Copyright: © 2013, Fabrizio Regalli <fabreg@fabreg.it>, Aurelien Requiem <aurelien@requiem.fr>, Edouard Gaulué <edouard@e-gaulue.com>
-License: GPL-3+
-
-Files: *
-Copyright: © 2013, The Piwik Team <hello@piwik.org>
-License: GPL-3+
+Comment: The per-file attribution that used to stand here named files the
+ packaging no longer has: the rename to matomo-vanilla moved debian/postinst,
+ debian/templates and their siblings to matomo-vanilla.* names, and others --
+ debian/piwik.cron.d, debian/docs, debian/install, debian/substvars -- are gone
+ altogether. Rather than keep stanzas pointing at nothing, the three authors of
+ the packaging are credited together for all of it; none of their earlier work
+ has been removed from the history.
 
 On Debian systems, you can find the full text of the GNU General Public
 License v3 in `/usr/share/common-licenses/GPL-3'.
-

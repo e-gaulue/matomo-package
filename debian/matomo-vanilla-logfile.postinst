@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+	# The timer runs as www-data, so the directory it appends to has to be its own.
+	if ! dpkg-statoverride --list /var/log/matomo >/dev/null; then
+		chown www-data /var/log/matomo
+		chmod 0755 /var/log/matomo
+	else
+		echo "  * Skipped permission changes in /var/log/matomo according to 'dpkg'"
+	fi
+
+	echo "  * The report archiving run now also writes to"
+	echo "       /var/log/matomo/matomo-archive.log"
+	echo "    as it did before, rotated daily and kept for 30 days. It stays in the"
+	echo "    journal too: journalctl -u matomo"
+	echo "    If you keep your own drop-in that sets ExecStart -- to add --url=, say --"
+	echo "    it wins over this one and the file stops being written; see"
+	echo "    /usr/lib/systemd/system/matomo.service.d/10-logfile.conf for the line to"
+	echo "    copy into yours."
+fi
+
+#DEBHELPER#
+
+exit 0

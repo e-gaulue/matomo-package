@@ -9,7 +9,7 @@
 
 # this is a regexp for sed.
 # http://www.ascii.cl/htmlcodes.htm
-UTF8_ALIENS='s/#8243/#8221/g; s/#8211/#45/g; s/#8216/#39/g; s/#8242/#39/g;'
+UTF8_ALIENS='s/#8243/#34/g; s/#8221/#34/g; s/#8220/#34/g; s/#8211/#45/g; s/#8217/#39/g; s/#8216/#39/g; s/#8242/#39/g;'
 
 if [ -z "$1" ] || [ ! -f "debian/changelog" ]
 then
@@ -32,7 +32,8 @@ fi
 
 #EG Remove last control on version to be more permisive 
 #CHANGELOG_URL=$(wget -O - -q 'https://matomo.org/changelog/' | grep "Matomo $1" | sed 's/.*href=\([^>]*\).*/\1/' | sed -e 's/"//g' -e "s/'//g" | grep ^http | grep "$1/")
-CHANGELOG_URL=$(wget -O - -q 'https://matomo.org/changelog/' | grep "Matomo.* $1" | sed 's/.*href=\([^>]*\).*/\1/' | sed -e 's/"//g' -e "s/'//g" | grep ^http)
+VER_SLUG=$(echo "$1" | tr . -)
+CHANGELOG_URL=$(wget -O - -q https://matomo.org/changelog/ | grep -oE "https://matomo\.org/changelog/matomo-${VER_SLUG}/" | head -1)
 
 if ! echo "$CHANGELOG_URL" | grep --quiet --ignore-case http
 then
@@ -43,13 +44,13 @@ fi
 echo "Changelog url found at $CHANGELOG_URL"
 
 wget -O - -q "$CHANGELOG_URL" | \
-	sed -n "/List of.*in Matomo $2.*>$/,/<\/ul>/p;" | \
+	sed -n "/Tickets closed in Matomo $2/,/<\/div>/p" | \
 	grep -e 'dev.matomo.org/trac/ticket' -e 'github.com/matomo-org' | \
-	sed -e :a -e 's/<[^>]*>//g;/</N;//ba' | \
+	sed -e :a -e 's/<[^>]*>/ /g;/</N;//ba' | \
 	sed '/^$/d' | \
 	recode --silent --force UTF-8..ascii | recode UTF-8..HTML | sed -e "${UTF8_ALIENS}" | \
 	recode HTML..UTF-8 | recode HTML..UTF-8 | recode UTF-8..ascii | \
-	sed 's/\^A//g' | \
+	sed -e 's/\^A//g' -e 's/[[:space:]]\{1,\}/ /g' -e 's/ \]/]/g' -e 's/ :/:/g' -e 's/ ,/,/g' -e 's/ \././g' -e 's/^ //' -e 's/ $//' | \
 	sed -r 's/^(#[0-9]+)([ ]+)(.*)/\3 (Closes: \1)/g' | while read -r LINE
 do
 	echo "  * ${LINE}"

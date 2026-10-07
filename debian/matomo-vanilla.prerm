@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+# Nothing here may delete anything that is not a cache.
+#
+# The version of this script shipped up to matomo 5.3.1-1 did, on "remove":
+#
+#       rm -rf /var/lib/matomo
+#       rm -rf /usr/share/matomo/config
+#
+# Both were wrong. Debian Policy 6.6 reserves the destruction of data for
+# "purge": "remove" must leave the administrator's data behind, and
+# /var/lib/matomo is data. And the second line was dangerous rather than merely
+# incorrect: /usr/share/matomo/config is a symlink to /etc/matomo in a packaged
+# installation, so "rm -rf" removed only the link -- but on an installation whose
+# files had been replaced in place by Matomo's own updater it is a real directory
+# holding config.ini.php, and the configuration was destroyed without warning.
+# The comment justifying them, "dpkg fails because they are not empty", is not
+# true either: dpkg prints "unable to delete old directory: Directory not empty"
+# and carries on. Verified.
+#
+# /var/lib/matomo is now removed by the postrm, on purge only.
+
+case "$1" in
+	upgrade)
+		# Compiled Twig templates are tied to the Matomo version that produced
+		# them, so they are cleared between versions. Cache only.
+		if [ -d /var/lib/matomo/data/tmp/templates_c ]; then
+			find /var/lib/matomo/data/tmp/templates_c -mindepth 1 -delete 2>/dev/null || true
+		fi
+		;;
+esac
+
+#DEBHELPER#

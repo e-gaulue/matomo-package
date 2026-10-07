@@ -1,9 +1,0 @@
-/var/log/matomo/matomo-archive.log
-{
-	rotate 30
-	daily
-	missingok
-	notifempty
-	delaycompress
-	compress
-}

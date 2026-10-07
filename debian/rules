@@ -2,7 +2,8 @@
 
 #export DH_VERBOSE=1
 
-d = debian/matomo
+# The main package; matomo-vanilla-logfile has no files of its own to prepare.
+d = debian/matomo-vanilla
 
 %:
 	dh $@
@@ -25,7 +26,6 @@ install: build
 	@dh_installdirs
 	@$(MAKE) checkfetch DESTDIR=$(CURDIR)/$d
 	@$(MAKE) cleanup DESTDIR=$(CURDIR)/$d
-	@$(MAKE) checkconfig DESTDIR=$(CURDIR)/$d
 	@$(MAKE) checkmatomoinstall DESTDIR=$(CURDIR)/$d
 	@$(MAKE) checkmatomorootdir DESTDIR=$(CURDIR)/$d
 	@dh_install
@@ -39,7 +39,7 @@ binary-indep: build install
 	@dh_testroot
 	@dh_installdirs -i
 	@dh_install -i
-	@dh_installcron
+	@dh_installsystemd -p matomo-vanilla --no-enable --no-start matomo.timer
 	@dh_installchangelogs
 	@dh_installdocs
 	@dh_installdebconf
@@ -47,18 +47,10 @@ binary-indep: build install
 	@dh_link
 	@dh_fixperms
 	@$(MAKE) fixperms DESTDIR=$(CURDIR)/$d
-	@$(MAKE) fixsettings DESTDIR=$(CURDIR)/$d
 	@$(MAKE) checklintianlic DESTDIR=$(CURDIR)/$d
 	@$(MAKE) checklintianextralibs DESTDIR=$(CURDIR)/$d
-	@$(MAKE) manifest DESTDIR=$(CURDIR)/$d
 	@dh_installdeb
-# The binary carries an epoch that the source version does not. The epoch is what makes
-# apt prefer this package over the matomo Debian itself distributes, whose 5.3.1+dfsg-1
-# dpkg reads as newer than anything published here -- so on a machine with both
-# repositories, a release upgrade would silently move the installation onto Debian's
-# package. Keeping it off the source version keeps the changelog increasing normally
-# towards the release that follows, and keeps the colon out of the git tag.
-	@dh_gencontrol -- -v1:5.3.1-2
+	@dh_gencontrol
 	@dh_md5sums
 	@dh_builddeb
 

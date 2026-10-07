@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+# The log file is this package's own creation, so purge takes it. remove keeps it:
+# it is the administrator's data, and Policy only allows purge to delete that.
+if [ "$1" = "purge" ]; then
+	rm -rf /var/log/matomo
+fi
+
+#DEBHELPER#
+
+exit 0

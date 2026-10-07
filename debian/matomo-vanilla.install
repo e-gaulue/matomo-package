@@ -1,0 +1,50 @@
+# /usr/share/matomo is upstream's release, byte for byte. The only file this package
+# adds to it is debian/conf/bootstrap.php, which Matomo loads from the document root
+# before its own bootstrap -- see that file for why nothing upstream is patched.
+#
+# config/ stays in the tree, unmodified, including global.ini.php and the integrity
+# manifest: Matomo reads global.ini.php from the document root, and this
+# installation's own configuration lives at PIWIK_USER_PATH/config instead, which
+# bootstrap.php points at /var/lib/matomo -- a symlink to /etc/matomo.
+matomo/config					usr/share/matomo/
+matomo/console					usr/share/matomo/
+matomo/core					usr/share/matomo/
+matomo/DIObject.php				usr/share/matomo/
+matomo/index.php				usr/share/matomo/
+matomo/js					usr/share/matomo/
+matomo/lang					usr/share/matomo/
+matomo/libs					usr/share/matomo/
+matomo/LegacyAutoloader.php			usr/share/matomo/
+matomo/matomo.js				usr/share/matomo/
+matomo/matomo.php				usr/share/matomo/
+matomo/misc					usr/share/matomo/
+matomo/node_modules				usr/share/matomo/
+matomo/offline-service-worker.js		usr/share/matomo/
+matomo/piwik.js					usr/share/matomo/
+matomo/piwik.php				usr/share/matomo/
+matomo/plugins					usr/share/matomo/
+matomo/robots.txt				usr/share/matomo/
+matomo/tests					usr/share/matomo/
+matomo/vendor					usr/share/matomo/
+# Upstream's own documentation, kept in the tree so the manifest matches. Not
+# duplicated into /usr/share/doc: Policy only asks for copyright and the changelog
+# there, and shipping these twice would cost 57 kB and one more lintian override.
+matomo/LEGALNOTICE				usr/share/matomo/
+matomo/LICENSE					usr/share/matomo/
+matomo/PRIVACY.md				usr/share/matomo/
+matomo/README.md				usr/share/matomo/
+matomo/SECURITY.md				usr/share/matomo/
+# Not installed: upstream's empty tmp/. Writable state lives under PIWIK_USER_PATH.
+#matomo/tmp					usr/share/matomo/
+# Gone from the 5.14.0 tarball; debian/changelog carries the upstream entries anyway.
+#matomo/CHANGELOG.md				usr/share/doc/matomo-vanilla/
+#matomo/CONTRIBUTING.md				usr/share/doc/matomo-vanilla/
+debian/conf/bootstrap.php			usr/share/matomo/
+debian/conf/common.config.ini.php			etc/matomo
+debian/conf/apache.conf				etc/matomo
+debian/conf/lighttpd.conf			etc/matomo
+debian/conf/matomo.service			usr/lib/systemd/system/
+debian/conf/matomo.timer			usr/lib/systemd/system/
+debian/conf/finish-setup			usr/share/matomo-vanilla/
+debian/gpg-keys/matomo-archive-keyring.gpg	usr/share/keyrings/
+debian/conf/apache-alias.conf			usr/share/matomo-vanilla/

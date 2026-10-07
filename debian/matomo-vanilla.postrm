@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+# Sourced here, at the very top, and not left to the block debhelper appends at the
+# end. Sourcing confmodule RE-EXECUTES the script under the debconf frontend when
+# DEBIAN_HAS_FRONTEND is unset, so with the source at the end every side effect
+# above it runs again on the new pass -- a single "dpkg --purge" can then run the
+# whole script several times over. Sourcing first makes the re-execution
+# happen before anything has been done, and debhelper's own later source then sees
+# DEBIAN_HAS_FRONTEND and becomes a no-op.
+#
+# Guarded, because a postrm can run after debconf itself has been removed.
+if [ -e /usr/share/debconf/confmodule ]; then
+	. /usr/share/debconf/confmodule
+fi
+
+## Remove the web server configuration symlinks this package created.
+
+if [ "$1" = "remove" ] || [ "$1" = "purge" ];
+then
+
+	if [ -L /etc/lighttpd/conf-available/50-matomo.conf ];
+	then
+		if which lighty-disable-mod >/dev/null 2>&1; then
+			lighty-disable-mod matomo >/dev/null 2>&1 || true
+		fi
+		rm -f /etc/lighttpd/conf-available/50-matomo.conf
+		invoke-rc.d lighttpd reload 3>/dev/null || true
+	fi
+
+	if [ -e /usr/share/apache2/apache2-maintscript-helper ];
+	then
+		. /usr/share/apache2/apache2-maintscript-helper
+		# NOT "|| exit $?". apache2_invoke reports "No action required" with a
+		# non-zero status, and a postrm has to tolerate having nothing left to do:
+		# Policy requires purge to work even when run twice, and by this point there
+		# is nothing to recover anyway -- the symlink is removed just below whatever
+		# the helper thinks. The published 5.3.1-1 exits here, which is how a purge
+		# in a chroot without a syslog ended with "subprocess returned error exit
+		# status 20" and left the package half-purged.
+		if ! apache2_invoke disconf matomo.conf; then
+			echo "  * apache2_invoke disconf matomo.conf had nothing to do, or failed;"
+			echo "    /etc/apache2/conf-available/matomo.conf is removed regardless."
+		fi
+		rm -f /etc/apache2/conf-available/matomo.conf
+		if [ -e /etc/apache2/conf-available/matomo-alias.conf ]; then
+			apache2_invoke disconf matomo-alias.conf || true
+			rm -f /etc/apache2/conf-available/matomo-alias.conf
+		fi
+	fi
+fi
+
+# Data and logs go on purge, and only on purge -- Debian Policy 6.6. Up to
+# 5.3.1-1 the prerm deleted /var/lib/matomo on "remove", which threw away the
+# administrator's data on an operation that is supposed to be reversible.
+#
+# The database is deliberately left alone: this package never created it and has
+# no way to tell whether it is still wanted.
+
+if [ "$1" = "purge" ];
+then
+	rm -rf /var/lib/matomo
+
+	if [ -d /etc/matomo ]; then
+		echo "  * /etc/matomo has been left in place: it holds config.ini.php, which this"
+		echo "    package did not create. Remove it by hand once you are sure, along with"
+		echo "    the Matomo database, which is also untouched."
+	fi
+fi
+
+#DEBHELPER#
