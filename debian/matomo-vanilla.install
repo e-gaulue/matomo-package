@@ -48,3 +48,4 @@ debian/conf/matomo.timer			usr/lib/systemd/system/
 debian/conf/finish-setup			usr/share/matomo-vanilla/
 debian/gpg-keys/matomo-archive-keyring.gpg	usr/share/keyrings/
 debian/conf/apache-alias.conf			usr/share/matomo-vanilla/
+debian/conf/geoip-reset.php			usr/share/matomo-vanilla/

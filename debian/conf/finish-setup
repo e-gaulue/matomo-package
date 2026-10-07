@@ -6,10 +6,12 @@
 # readable and the work can be run by hand with the same arguments.
 #
 # $1 -- "true" when the administrator enabled automatic database upgrades.
+# $2 -- "yes" when the postinst has just moved a GeoIP database out of the code tree.
 
 set -e
 
 AUTO=${1:-false}
+GEOIP_MOVED=${2:-no}
 CONSOLE=/usr/share/matomo/console
 # Where this package reads the configuration: /etc/matomo, reached by Matomo through
 # PIWIK_USER_PATH/config -- /var/lib/matomo/config, a symlink. NOT
@@ -49,6 +51,15 @@ else
 	echo "       /usr/bin/php /usr/share/matomo/console core:update"
 	echo "    The second pass is not redundant: a plugin activated by the first one only"
 	echo "    gets its database columns on the next, and tracking fails until it does."
+fi
+
+# A GeoIP database moved out of the tree is as old as the day it was put there: the
+# previous package could not let Matomo update it. Forgetting the date of the last
+# update makes the updater run at the next scheduled task. Needs the database, so
+# only once it is migrated, and it must not fail the setup over a detail.
+if [ "$GEOIP_MOVED" = yes ] && [ "$AUTO" = "true" ]; then
+	php /usr/share/matomo-vanilla/geoip-reset.php 2>/dev/null \
+		|| echo "  * Could not tell Matomo to refresh the moved GeoIP database; do it from Administration > Geolocation."
 fi
 
 # Hand the cache back to the web server. Everything above runs php as root, and php

@@ -11,3 +11,12 @@ etc/matomo							var/lib/matomo/config
 # webrootDirRelativeToMatomo, set to "plugins-ext" in bootstrap.php. The link is the
 # second and last entry this package adds to /usr/share/matomo.
 var/lib/matomo/plugins						usr/share/matomo/plugins-ext
+#
+# Where Matomo's caches, sessions and compiled templates really are: path.tmp resolves
+# to PIWIK_USER_PATH/tmp, so /var/lib/matomo/tmp. The link is for Matomo's own
+# "private directories" diagnostic, which writes a sentinel at the hard-coded
+# PIWIK_INCLUDE_PATH/tmp/empty and then checks that the web server refuses to serve
+# tmp/ -- with the link, the sentinel lands in the real cache directory and the check
+# tests the directory that actually holds the caches. Upstream ships an empty tmp/
+# here; this is the third and last entry this package adds to /usr/share/matomo.
+var/lib/matomo/tmp						usr/share/matomo/tmp

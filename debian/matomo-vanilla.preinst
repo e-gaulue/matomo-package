@@ -30,10 +30,10 @@ code_version() {
 }
 
 # Version of package $1, but only while it still owns files on disk: "ii"
-# installed, "iF" half-configured -- the state the matomo package is in when we
-# run, apt having just deconfigured it for our Breaks -- "iU" unpacked, "iH"
-# half-installed. Any other state ("rc": removed, conffiles kept; "un": unknown)
-# means its files are already gone and there is nothing left to guard.
+# installed, "iF" half-configured, "iU" unpacked, "iH" half-installed -- and the
+# same with "h" in front, a package on hold, which is installed all the same. Any
+# other state ("rc": removed, conffiles kept; "un": unknown) means its files are
+# already gone and there is nothing left to guard.
 # The version of the package that owns the tree, empty if no package does.
 #
 # Which package owns the tree, asked of dpkg's file lists.
@@ -55,7 +55,7 @@ tree_owner() {
 # for those: dpkg has not touched their entry.
 owning_version() {
 	dpkg-query -W -f='${db:Status-Abbrev} ${Version}\n' "$1" 2>/dev/null \
-		| awk '$1 ~ /^i[iFUH]/ { print $2; exit }'
+		| awk '$1 ~ /^[ih][iFUH]/ { print $2; exit }'
 }
 
 # Upstream part of a Debian version: drop epoch, revision, and any +dfsg/~rc suffix.
@@ -191,14 +191,52 @@ elif [ -n "$CODE" ]; then
 	#     directly would end in dpkg's file-overwrite error anyway; this says why.
 	if [ -n "$OWNER" ] && [ "$OWNER" != "$SELF" ] && tree_is_ours "$OWNER" \
 	   && [ -n "$OWNER_VERSION" ] && dpkg --compare-versions "$OWNER_VERSION" lt 1:5.3.1-2; then
-		stop "matomo $OWNER_VERSION from debian.matomo.org is installed. Bring it to its last" \
-		     "version first, which checks this installation and carries the notice about" \
-		     "the rename, then come back to this one:" \
-		     "    sudo apt upgrade" \
-		     "    sudo apt install matomo-vanilla" \
-		     "" \
-		     "That order matters: the version you have deletes /var/lib/matomo when it is" \
-		     "removed, and the next one does not."
+		# A package put on hold -- the sensible move for whoever saw Debian's matomo
+		# arrive with Debian 13 and wanted to keep this one -- never gets that upgrade
+		# until the hold is lifted, and the advice below would send them in circles.
+		UNHOLD=
+		if [ "$(dpkg-query -W -f='${db:Status-Want}' "$OWNER" 2>/dev/null)" = hold ]; then
+			UNHOLD="    sudo apt-mark unhold $OWNER      (it is on hold, so apt upgrade skips it)"
+		fi
+		# What that upgrade would install. Debian publishes a matomo of its own, and
+		# this repository's announcement outranks it by its epoch -- but only where
+		# apt can read this repository's matomo suite, which on Debian 13 means the
+		# existing sources line has been pointed at the new keyring. Where it has
+		# not, the candidate is Debian's package, and "apt upgrade" would be the very
+		# silent switch all of this exists to prevent: so that advice is withheld.
+		CANDIDATE=$(apt-cache policy "$OWNER" 2>/dev/null | sed -n 's/^  Candidate: //p' | head -1)
+		case "$CANDIDATE" in
+		1:*)
+			stop "matomo $OWNER_VERSION from debian.matomo.org is installed. Bring it to its last" \
+			     "version first, which checks this installation and carries the notice about" \
+			     "the rename, then come back to this one:" \
+			     ${UNHOLD:+"$UNHOLD"} \
+			     "    sudo apt upgrade" \
+			     "    sudo apt install matomo-vanilla" \
+			     "" \
+			     "That order matters: the version you have deletes /var/lib/matomo when it is" \
+			     "removed, and the next one does not."
+			;;
+		*)
+			stop "matomo $OWNER_VERSION from debian.matomo.org is installed, and apt would" \
+			     "upgrade it to ${CANDIDATE:-nothing} -- not this repository's last version" \
+			     "under that name, 1:5.3.1-2, but the package Debian distributes. That is a" \
+			     "different product, and the switch to it would be silent: DO NOT run" \
+			     "apt upgrade${UNHOLD:+, and do not lift the hold,} until this is fixed." \
+			     "" \
+			     "apt cannot read this repository's matomo suite here. Point the sources line" \
+			     "for it at the new keyring, as https://debian.matomo.org/ describes:" \
+			     "    deb [signed-by=/usr/share/keyrings/matomo-archive-keyring.gpg] \\" \
+			     "    https://debian.matomo.org/ matomo main" \
+			     "then run apt update and check that the candidate is this repository's:" \
+			     "    apt policy matomo        ->  Candidate: 1:5.3.1-2" \
+			     "" \
+			     "Only then:" \
+			     ${UNHOLD:+"$UNHOLD"} \
+			     "    sudo apt upgrade" \
+			     "    sudo apt install matomo-vanilla"
+			;;
+		esac
 	fi
 
 	# 3. The code on disk must be the code the owning package installed. When it
@@ -383,8 +421,8 @@ if [ -L /usr/share/matomo/config ]; then
 	rm -f /usr/share/matomo/config
 fi
 
-# The old tmp symlink goes with the package that shipped it. Caches only;
-# Matomo's path.tmp is now /var/lib/matomo/tmp.
+# The old tmp symlink goes with the package that shipped it; this package ships its own,
+# to /var/lib/matomo/tmp, where Matomo's path.tmp now points.
 
 
 #DEBHELPER#
