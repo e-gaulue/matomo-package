@@ -1,0 +1,25 @@
+#!/bin/sh
+# Reminder printed by apt after each dpkg run, from /etc/apt/apt.conf.d/99matomo-rename.
+# Silent once matomo-vanilla is installed, or once the administrator has acknowledged
+# the rename. Must never fail: apt would report the failure on every run.
+
+if dpkg-query -W -f='${db:Status-Abbrev}' matomo-vanilla 2>/dev/null | grep -q '^i'; then
+	exit 0
+fi
+if [ -e /etc/matomo/rename-notice-acknowledged ]; then
+	exit 0
+fi
+
+cat <<'MSG'
+
+  * matomo: this package has been renamed matomo-vanilla, and no upgrade will
+    make the switch for you. It is published in a suite of its own, under a new
+    repository signing key, so apt cannot even see it until you have set both up
+    -- the two lines are at https://debian.matomo.org/ -- and then:
+        sudo apt install matomo-vanilla
+    It keeps /etc/matomo, your data and your database where they are; as a
+    precaution, keep a copy of both before (tar of /etc/matomo, mysqldump).
+    To silence this reminder:  sudo touch /etc/matomo/rename-notice-acknowledged
+
+MSG
+exit 0

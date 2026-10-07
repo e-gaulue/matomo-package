@@ -100,9 +100,9 @@ matomo: privacy-breach-piwik (choke on: "settrackerurl") [usr/share/matomo/piwik
 #matomo: improbable-bug-number-in-closes
 
 # Change/reset permission on /var/lib/matomo/data/tmp to www-data 0755/0644
-matomo: recursive-privilege-change "chown -R" [postinst:20]
-matomo: recursive-privilege-change "find /var/lib/matomo/data/tmp -type d -exec chmod" [postinst:21]
-matomo: recursive-privilege-change "find /var/lib/matomo/data/tmp -type f -exec chmod" [postinst:22]
+matomo: recursive-privilege-change "chown -R" [postinst:*]
+matomo: recursive-privilege-change "find /var/lib/matomo/data/tmp -type d -exec chmod" [postinst:*]
+matomo: recursive-privilege-change "find /var/lib/matomo/data/tmp -type f -exec chmod" [postinst:*]
 
 # Rules added specifically for 4.1.0
 matomo: script-not-executable [usr/share/matomo/vendor/wikimedia/less.php/bin/lessc]
@@ -117,3 +117,25 @@ matomo: script-not-executable [usr/share/matomo/vendor/symfony/var-dumper/Resour
 
 # To learn v4 postinst how to deal with abort-upgrade
 matomo: uses-dpkg-database-directly [preinst]
+
+# The NEWS entry is labelled 1:5.3.1-2, which is this binary's version but not the
+# source version this package is built from. That is deliberate and the entry has to
+# match the binary: apt-listchanges compares the label against what is installed, and
+# with the source version there it reads the file and displays nothing -- on the very
+# upgrade the notice exists for.
+#
+# The epoch is on the binary alone because it is apt that has to prefer this package
+# over the matomo Debian distributes, whose 5.3.1+dfsg-1 dpkg reads as newer than
+# anything published here.
+matomo: debian-news-entry-has-unknown-version 1:5.3.1-2 [usr/share/doc/matomo/NEWS.Debian.gz:*]
+
+# Inherited, and deliberately so. This package ships the same files as the 5.3.1-1
+# already published -- bar the notice above -- so that upgrading to it changes nothing
+# on the system. Correcting a permission here would mean touching that tree, which is
+# the one thing this package must not do.
+matomo: non-standard-file-perm 0664 != 0644 [etc/matomo/manifest.inc.php]
+
+# The preinst prints the commands an administrator has to run by hand when it refuses
+# to install; one of them is a chown -R on the directory extensions are copied into.
+# It is text inside an echo, never executed by the script.
+matomo: recursive-privilege-change "chown -R" [preinst:*]

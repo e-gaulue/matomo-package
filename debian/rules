@@ -52,7 +52,13 @@ binary-indep: build install
 	@$(MAKE) checklintianextralibs DESTDIR=$(CURDIR)/$d
 	@$(MAKE) manifest DESTDIR=$(CURDIR)/$d
 	@dh_installdeb
-	@dh_gencontrol
+# The binary carries an epoch that the source version does not. The epoch is what makes
+# apt prefer this package over the matomo Debian itself distributes, whose 5.3.1+dfsg-1
+# dpkg reads as newer than anything published here -- so on a machine with both
+# repositories, a release upgrade would silently move the installation onto Debian's
+# package. Keeping it off the source version keeps the changelog increasing normally
+# towards the release that follows, and keeps the colon out of the git tag.
+	@dh_gencontrol -- -v1:5.3.1-2
 	@dh_md5sums
 	@dh_builddeb
 

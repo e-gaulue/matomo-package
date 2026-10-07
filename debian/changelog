@@ -1,3 +1,23 @@
+matomo (5.3.1-2) stable; urgency=high
+
+  * Announce the rename to matomo-vanilla. This upgrade ships the same Matomo
+    5.3.1 with the same layout; it exists to carry the notice, and nothing
+    under the name matomo will follow it. Switching is done by asking for
+    matomo-vanilla by name.
+  * Refuse to install over a tree that Matomo's own updater has replaced:
+    dpkg would put the 5.3.1 files back in front of a database migrated
+    further. The refusal spells out the way to matomo-vanilla instead.
+  * Print a short reminder after each apt run until matomo-vanilla is
+    installed or /etc/matomo/rename-notice-acknowledged exists.
+  * Stop deleting /var/lib/matomo and /usr/share/matomo/config when the package
+    is removed. Removal is not purge, and those hold the administrator's data.
+  * Leave the web server configuration alone on remove and purge once
+    matomo-vanilla is installed: it is the same configuration, in service.
+  * Drop the recommendation of php-geoip, which Debian no longer ships; Matomo
+    5 locates visitors with GeoIP 2 / DB-IP and its own bundled reader.
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 06 Oct 2026 23:30:00 +0200
+
 matomo (5.3.1-1) stable; urgency=high
 
   * Releasing Matomo 5.3.1

@@ -1,0 +1,6 @@
+// Installed by the matomo package from debian.matomo.org, which has been renamed
+// matomo-vanilla. After each dpkg run, apt prints a short reminder of that rename
+// until matomo-vanilla is installed, or until the administrator has acknowledged
+// it with:  touch /etc/matomo/rename-notice-acknowledged
+// Deleting this file silences it as well. It never fails an apt run.
+DPkg::Post-Invoke { "if [ -x /usr/lib/matomo/rename-notice ]; then /usr/lib/matomo/rename-notice; fi || true"; };

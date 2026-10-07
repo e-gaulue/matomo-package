@@ -1,0 +1,58 @@
+matomo (1:5.3.1-2) stable; urgency=high
+
+  THE PACKAGE HAS BEEN RENAMED, AND THIS UPGRADE CHANGES NOTHING ELSE. The Matomo
+  you are running, your configuration, your data and your database are all left
+  exactly as they are. This entry exists to tell you one thing.
+
+  The matomo package from debian.matomo.org is now published as matomo-vanilla.
+  Debian distributes its own, different package that is also called matomo; the
+  two install into the same directory and could replace one another on a version
+  comparison alone, without saying so. Separate names end that.
+
+  Nothing more will ever arrive under the name matomo, and no form of upgrade
+  makes the switch: that is a decision, taken once, by you, in two steps.
+
+  1. matomo-vanilla is published in a suite of its own, signed by a key this
+     package did not install, so apt does not see it before you have set up
+     both:
+
+      sudo curl -fsSLo /usr/share/keyrings/matomo-archive-keyring.gpg \
+           https://debian.matomo.org/repository.gpg
+      echo "deb [signed-by=/usr/share/keyrings/matomo-archive-keyring.gpg] \
+      https://debian.matomo.org/ matomo-vanilla main" \
+        | sudo tee /etc/apt/sources.list.d/matomo-vanilla.list
+      sudo apt update
+
+     The key is the RSA-4096 key this repository has published since 2016,
+     refreshed and given a signing subkey; its fingerprint, to compare with
+     "gpg --show-keys /usr/share/keyrings/matomo-archive-keyring.gpg", is
+     4921 5857 403F 47D7 C124 1FDB 7803 9388 ED64 6CFD.
+
+  2. Then ask for the package by name:
+
+      sudo apt install matomo-vanilla
+
+  As a precaution before that -- it is your call, the switch keeps both -- take
+  a copy of your configuration and of your database:
+
+      sudo tar czf ~/matomo-before-vanilla.tar.gz /etc/matomo
+      mysqldump --single-transaction <database> > ~/matomo-before-vanilla.sql
+
+  It replaces this package. Your configuration in /etc/matomo, your data and your
+  database stay where they are; the database is migrated to the new release if
+  you let the package do that, as before. If you had uncommented the archiving
+  line in /etc/cron.d/matomo-archive, you will be asked whether to keep it or to
+  move to the systemd timer. If you relied on /var/log/matomo/matomo-archive.log,
+  install matomo-vanilla-logfile as well.
+
+  Until the switch is made, apt prints a short reminder after each run. To
+  silence it:
+
+      sudo touch /etc/matomo/rename-notice-acknowledged
+
+  What matomo-vanilla is -- upstream's release as it is, with Matomo's own updater
+  and Marketplace usable -- and how it compares with Debian's package:
+
+      https://debian.matomo.org/
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Tue, 06 Oct 2026 23:30:00 +0200

@@ -1,6 +1,167 @@
 #!/bin/sh
 set -e
 
+# ---------------------------------------------------------------------------
+# Two installations this version must never go over. Both are checked before
+# anything else, and an exit here makes dpkg abort before a single file is written.
+#
+# 1. matomo-vanilla is, or was, installed here. This package Conflicts with it, so
+#    "apt install matomo" on such a machine means apt has just REMOVED matomo-vanilla
+#    to make room -- after one confirmation that is easy to say yes to. Unpacking
+#    Matomo 5.3.1 over the result would put old code in front of a database that
+#    matomo-vanilla migrated further. matomo-vanilla's removal keeps its configuration
+#    and data, so the way back is to install it again.
+# 2. The installed matomo is Debian's own, not this repository's: a machine where
+#    both repositories are configured sees this version as an upgrade of that name.
+#    The two packages are different products with different layouts, and this one is
+#    not an upgrade of the other. The discriminator is the apt keyring for this
+#    repository, which only this repository's package ships.
+# ---------------------------------------------------------------------------
+VANILLA_STATE=$(dpkg-query -W -f='${db:Status-Abbrev}' matomo-vanilla 2>/dev/null || true)
+case "$VANILLA_STATE" in
+"" | un* | pn* | in*)
+	# never installed, purged, or an install that its own preinst refused before a
+	# single file was unpacked: nothing of it is on this system.
+	;;
+*)
+	echo ""
+	echo "  * STOPPING. Nothing on this system has been changed."
+	echo ""
+	echo "    matomo-vanilla is installed here, or was: its configuration and data are"
+	echo "    still in place. This package is the OLD name, with Matomo 5.3.1, and it"
+	echo "    must not be put back over an installation that matomo-vanilla carried"
+	echo "    further -- the database would be ahead of the code."
+	echo ""
+	echo "    If apt has just removed matomo-vanilla to install this, nothing is lost;"
+	echo "    put it back:"
+	echo "        sudo apt install matomo-vanilla"
+	echo ""
+	echo "    If you really mean to return to the old package, purge matomo-vanilla"
+	echo "    first and restore a database backup taken before it was installed."
+	echo ""
+	exit 1
+	;;
+esac
+
+if [ "$1" = upgrade ] && [ -n "$2" ] \
+   && ! dpkg -S /etc/apt/trusted.gpg.d/matomo-keyring-automatic.gpg 2>/dev/null | grep -q '^matomo: '; then
+	echo ""
+	echo "  * STOPPING. Nothing on this system has been changed."
+	echo ""
+	echo "    The matomo package installed here, version $2, is not from debian.matomo.org:"
+	echo "    it is the one Debian distributes. This version is from debian.matomo.org,"
+	echo "    and it is not an upgrade of Debian's package -- the two are different"
+	echo "    products, laid out differently, and this one must not be unpacked over the"
+	echo "    other."
+	echo ""
+	echo "    If Debian's package is the one you want, take debian.matomo.org out of your"
+	echo "    apt sources and this offer goes away:"
+	echo "        grep -rl debian.matomo.org /etc/apt/sources.list /etc/apt/sources.list.d/"
+	echo "    or keep the source and hold the package:"
+	echo "        sudo apt-mark hold matomo"
+	echo ""
+	echo "    If you want this repository's Matomo instead, that is a switch, not an"
+	echo "    upgrade, and it is yours to drive: https://debian.matomo.org/ sets out"
+	echo "    the steps, starting with a backup of your database and configuration."
+	echo ""
+	exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# This version ships the same Matomo 5.3.1 as the one before it: that is the
+# point of it, an upgrade that changes nothing and carries a notice. Which makes
+# it dangerous in exactly one case.
+#
+# If Matomo's own updater has replaced the code in place, dpkg still records
+# 5.3.1-1 while the tree holds a later release and the database has been migrated
+# to match. Unpacking this version would put the 5.3.1 files back over that tree
+# -- older code in front of a newer database -- and leave every file the newer
+# release added lying around untracked. Silently, as one line of an apt upgrade.
+#
+# So it refuses, and says what to do instead. matomo-vanilla has a check of its
+# own for this; this package is the one an ordinary "apt upgrade" reaches first,
+# and it had none.
+# ---------------------------------------------------------------------------
+if [ -r /usr/share/matomo/core/Version.php ]; then
+	CODE=$(sed -n "s/.*[[:space:]]VERSION[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" \
+		/usr/share/matomo/core/Version.php | head -1)
+	if [ -n "$CODE" ] && [ "$CODE" != 5.3.1 ]; then
+		echo ""
+		echo "  * STOPPING. Nothing on this system has been changed."
+		echo ""
+		echo "    The Matomo code in /usr/share/matomo is version $CODE, but dpkg records"
+		echo "    5.3.1-1 and this version installs Matomo 5.3.1. The files were replaced"
+		echo "    without dpkg knowing, almost certainly by Matomo's own updater."
+		echo ""
+		echo "    Installing it would put the 5.3.1 files back over that tree, in front of"
+		echo "    a database already migrated to $CODE -- older code against a newer"
+		echo "    database -- and leave every file Matomo $CODE added lying around with no"
+		echo "    package owning it."
+		echo ""
+		echo "    There is a second thing to know, and one answer to both: THE PACKAGE HAS"
+		echo "    BEEN RENAMED. Current Matomo is published as matomo-vanilla, and it keeps"
+		echo "    this installation's configuration, data and database where they are."
+		echo ""
+		echo "    The way out, in full. Every command is here; none of it is automatic."
+		echo ""
+		echo "    1. Set up the matomo-vanilla suite and its signing key; apt does not see"
+		echo "       the package before that:"
+		echo "          sudo curl -fsSLo /usr/share/keyrings/matomo-archive-keyring.gpg \\"
+		echo "               https://debian.matomo.org/repository.gpg"
+		echo "          echo \"deb [signed-by=/usr/share/keyrings/matomo-archive-keyring.gpg] \\"
+		echo "          https://debian.matomo.org/ matomo-vanilla main\" \\"
+		echo "            | sudo tee /etc/apt/sources.list.d/matomo-vanilla.list"
+		echo "          sudo apt update"
+		echo "       Then check that the repository is not BEHIND"
+		echo "       the Matomo you are running. Your code is $CODE. If the packaged version"
+		echo "       is older, stop and wait for it to catch up: installing it would put"
+		echo "       older code in front of a database already migrated forward."
+		echo "          sudo apt update && apt policy matomo-vanilla"
+		echo ""
+		echo "    2. Take a database backup, and know how to restore it."
+		echo "          mysqldump --single-transaction <database> > ~/matomo-before-vanilla.sql"
+		echo ""
+		echo "    3. Note which extensions you installed, in Administration > Plugins."
+		echo "       Their code is in the tree you are about to set aside."
+		echo ""
+		echo "    4. Set the replaced tree aside. Your site is down from here until step 6,"
+		echo "       so pick your moment. Your configuration in /etc/matomo and your database"
+		echo "       are NOT in this tree and are not touched."
+		echo "          sudo mv /usr/share/matomo /usr/share/matomo.updated-in-place"
+		echo ""
+		echo "    5. Purge this package. It is the only way to retire its record cleanly:"
+		echo "       the version you have deletes /var/lib/matomo when it goes, which only"
+		echo "       holds caches, and purging it now rather than later keeps it from"
+		echo "       disabling the web server configuration once matomo-vanilla is running."
+		echo "       /etc/matomo/config.ini.php is not a packaged file and stays."
+		echo "          sudo apt purge matomo"
+		echo ""
+		echo "    6. Install the package under its new name. It finds /etc/matomo and your"
+		echo "       database where they are."
+		echo "          sudo apt install matomo-vanilla"
+		echo ""
+		echo "    7. Bring your extensions back, one command each. They come up already"
+		echo "       enabled: what records an extension as active is /etc/matomo/"
+		echo "       config.ini.php and the database, and neither moved."
+		echo "          sudo cp -a /usr/share/matomo.updated-in-place/plugins/<Name> \\"
+		echo "                     /var/lib/matomo/plugins/"
+		echo "          sudo chown -R www-data:www-data /var/lib/matomo/plugins"
+		echo "       From now on they live outside the code tree, so this is the last time."
+		echo "       The same goes for a GeoIP database you had put in misc/:"
+		echo "          sudo mv /usr/share/matomo.updated-in-place/misc/*.mmdb /var/lib/matomo/geoip/"
+		echo "          sudo chown www-data:www-data /var/lib/matomo/geoip/*.mmdb"
+		echo ""
+		echo "    8. Once Matomo answers correctly, the tree you set aside can go."
+		echo "          sudo rm -rf /usr/share/matomo.updated-in-place"
+		echo ""
+		echo "    To put this off instead:  sudo apt-mark hold matomo"
+		echo "    This whole notice is also in /usr/share/doc/matomo/NEWS.Debian.gz"
+		echo "    The full account is at https://debian.matomo.org/"
+		echo ""
+		exit 1
+	fi
+fi
+
 . /usr/share/debconf/confmodule
 
 # Before installing Matomo (ie: not an 'upgrade', we check if Piwik is already present

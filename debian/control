@@ -10,8 +10,8 @@ Architecture: all
 Homepage: http://matomo.org
 Pre-Depends: debconf (>= 1.5.71) | debconf-2.0
 Depends: php-cli, php-mysql|php-mysqlnd, php-curl, php-gd, php-xml, python3
-Recommends: logrotate, libapache2-mod-php|php-cgi|php-fpm, php-geoip, php (>= 8.0)
-Suggests: mariadb-server | mysql-server, geoip-database-extra, php-mbstring, libmaxminddb0
+Recommends: logrotate, libapache2-mod-php|php-cgi|php-fpm, php (>= 8.0)
+Suggests: mariadb-server | mysql-server, php-maxminddb, php-mbstring, libmaxminddb0
 Description: Leading Free/Libre open source Web Analytics software
  Matomo (formerly Piwik) is a full featured PHP MySQL software program that
  you download and install on your own webserver. At the end of the five minute

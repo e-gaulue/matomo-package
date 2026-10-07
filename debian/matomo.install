@@ -38,3 +38,5 @@ debian/conf/matomo.timer			usr/lib/systemd/system/
 debian/conf/matomo-archive			etc/cron.d/
 debian/conf/matomo-log				etc/logrotate.d/
 debian/gpg-keys/matomo-keyring-automatic.gpg	etc/apt/trusted.gpg.d/
+debian/conf/99matomo-rename			etc/apt/apt.conf.d
+debian/conf/rename-notice			usr/lib/matomo

@@ -155,7 +155,7 @@ manifest:
 			| grep -v "$(DESTDIR)/etc/matomo/lighttpd.conf" \
 			| grep -v "$(DESTDIR)/etc/matomo/apache.conf" \
 			| grep -v "$(DESTDIR)/etc/apt/" \
-			| egrep -v 'manifest.inc.php|autoload.php|autoload_real.php' \
+			| egrep -v 'manifest.inc.php|autoload.php|autoload_real.php|usr/lib/matomo/rename-notice' \
 			| sed 's#$(DESTDIR)##g;' \
 			| sed 's#/usr/share/matomo/##g; s#/etc/matomo/#config/#g;' \
 			| sed '1,$$ s/\([0-9]*\) \([a-z0-9]*\)  \(.*\)/\t\t"\3" => array("\1", "\2"),/;' \
@@ -183,6 +183,7 @@ fixperms:
 		@find $(DESTDIR) -type d -not -path "$(DESTDIR)/DEBIAN" -exec chmod 0755 {} \;
 		@find $(DESTDIR) -type f -not -path "$(DESTDIR)/DEBIAN/*" -exec chmod 0644 {} \;
 		@chmod 0755 $(DESTDIR)/usr/share/matomo/misc/cron/archive.sh
+		@chmod 0755 $(DESTDIR)/usr/lib/matomo/rename-notice
 		@chmod 0755 $(DESTDIR)/usr/share/matomo/console
 #		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/lox/xhprof/scripts/xhprofile.php
 		@chmod 0755 $(DESTDIR)/usr/share/matomo/vendor/pear/archive_tar/sync-php4

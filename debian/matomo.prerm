@@ -3,11 +3,15 @@ set -e
 
 ## Delete manually these directories because they are not empty and dpkg fails
 
-if [ "$1" = "remove" ];
-then
-	rm -rf /var/lib/matomo
-	rm -rf /usr/share/matomo/config
-fi
+# Nothing is deleted on remove any more. These two lines used to run here:
+#
+#     rm -rf /var/lib/matomo
+#     rm -rf /usr/share/matomo/config
+#
+# Removing a package is not purging it, and both paths hold what belongs to the
+# administrator -- /var/lib/matomo the writable state, /usr/share/matomo/config
+# the configuration or the symlink standing in for it. dpkg leaves a directory it
+# cannot empty, with a warning, which is the correct outcome here.
 
 if [ "$1" = "upgrade" ];
 then
