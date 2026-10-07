@@ -1,3 +1,45 @@
+matomo (5.14.1-1) stable; urgency=high
+
+  * Releasing Matomo 5.14.1
+  * Update the add to cart modal CTA footer. [by @AltamashShaikh]
+    (Closes: #25282)
+  * Fix a race condition in nonce validation. [by @chippison] (Closes:
+    #25300)
+  * Send temperature only to Bedrock models that support it. [by
+    @mneudert] (Closes: #25337)
+  * Fix goal recommendation UI issues and reload the page after goal
+    creation. [by @maxtaube] (Closes: #25365)
+  * #25395, #25369 Refresh Marketplace lists in the background instead
+    of hourly. [by @snake14]
+  * Redesign the Marketplace and give plugin details their own page. [by
+    @lachiebol] (Closes: #25397)
+  * Add trigger-based in-app promotions. [by @AltamashShaikh] (Closes:
+    #25398)
+
+  * Restart matomo.timer after the switch from the old package when it was
+    enabled before: the old package's removal had stopped it, and nothing
+    started it again. Say which archiving case applied instead of "not
+    enabled" in every case. A GeoIP database moved out of misc/ is out of
+    date, the previous package never having let Matomo update it: Matomo is
+    told to refresh it at its next scheduled run. Files uploaded under the
+    previous package (custom logos in misc/user) are moved to
+    /var/lib/matomo/misc/user, where Matomo now reads them, and misc/user
+    itself goes back to root:root 0755: the previous package had left it
+    writable by the web server, and dpkg leaves an existing directory's
+    mode alone.
+  * When an older matomo from this repository is on hold, the preinst now
+    sees it -- a held package read as "not installed", so no check ran and
+    the layout conversion went ahead before dpkg failed -- and its refusal
+    starts with "apt-mark unhold", or withholds the upgrade advice when the
+    candidate for that name is Debian's package rather than this
+    repository's announcement.
+  * Ship tmp as a symlink to /var/lib/matomo/tmp, the real cache directory:
+    Matomo's "private directories" check writes its sentinel at a hard-coded
+    tmp/empty in the code tree, and could not, which made diagnostics:run fail
+    and the System Check log a warning on every visit.
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Wed, 07 Oct 2026 21:24:30 +0200
+
 matomo (5.14.0-1) stable; urgency=high
 
   * Releasing Matomo 5.14.0
