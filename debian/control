@@ -51,7 +51,7 @@ Description: Leading Free/Libre open source Web Analytics software
 Package: matomo-vanilla-logfile
 Architecture: all
 Section: web
-Depends: ${misc:Depends}, matomo-vanilla, logrotate
+Depends: ${misc:Depends}, matomo-vanilla (= ${binary:Version}), logrotate
 Description: report archiving log file for matomo-vanilla
  Writes the output of Matomo's report archiving run to
  /var/log/matomo/matomo-archive.log, rotated daily and kept for
