@@ -1,3 +1,17 @@
+matomo (5.14.2-1) stable; urgency=high
+
+  * Releasing Matomo 5.14.2
+  * Depend on a PHP release with the fixes for the critical vulnerabilities
+    announced on 2026-10-21: 8.4.27 (trixie-security), 8.2.35
+    (bookworm-security), 8.3.36 or 8.5.12.
+  * matomo-vanilla-logfile depends on the same version of matomo-vanilla, so
+    that apt keeps both back, or upgrades both.
+  * Update composer/ca-bundle to 1.6.0. [by sgiehl] (Closes: #25563)
+  * Urgent Core release: warn On-Premise users running affected PHP
+    versions [by chippison] (Closes: #25566)
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Sun, 25 Oct 2026 20:41:18 +0100
+
 matomo (5.14.1-1) stable; urgency=high
 
   * Releasing Matomo 5.14.1
