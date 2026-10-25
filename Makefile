@@ -372,8 +372,10 @@ prepupload:
 		@test ! -f  $(ARCHIVE) || mv $(ARCHIVE) tmp/
 		@test ! -f  $(SIG) || echo " [MV] $(SIG) => tmp/"
 		@test ! -f  $(SIG) || mv $(SIG) tmp/
-		@test ! -f ../matomo_$(DEB_VERSION)_all.deb || echo " [MV] ../matomo_$(DEB_VERSION)_all.deb => tmp/"
-		@test ! -f ../matomo_$(DEB_VERSION)_all.deb || mv ../matomo_$(DEB_VERSION)_all.deb $(CURDIR)/tmp/
+		@for P in $(shell cat debian/control | grep ^Package | awk '{print $$2}'); do \
+			test ! -f ../$${P}_$(DEB_VERSION)_all.deb || echo " [CP] ../$${P}_$(DEB_VERSION)_all.deb => tmp/"; \
+			test ! -f ../$${P}_$(DEB_VERSION)_all.deb || cp -p ../$${P}_$(DEB_VERSION)_all.deb $(CURDIR)/tmp/; \
+		done
 		@test ! -f ../matomo_$(DEB_VERSION).dsc || echo " [MV] ../matomo_$(DEB_VERSION).dsc => tmp/"
 		@test ! -f ../matomo_$(DEB_VERSION).dsc || mv ../matomo_$(DEB_VERSION).dsc $(CURDIR)/tmp/
 		@test ! -f ../matomo_$(DEB_VERSION)_$(DEB_ARCH).changes || echo " [MV] ../matomo_$(DEB_VERSION)_$(DEB_ARCH).changes => tmp/"
