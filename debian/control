@@ -9,7 +9,13 @@ Package: matomo-vanilla
 Architecture: all
 Homepage: http://matomo.org
 Pre-Depends: ${misc:Pre-Depends}, debconf (>= 1.5.71) | debconf-2.0
-Depends: ${misc:Depends}, php-cli, php-mysql|php-mysqlnd, php-curl, php-gd, php-xml
+# The PHP floor is the first release of each branch with the fixes for the critical
+# vulnerabilities announced by php.net on 2026-10-21 (Matomo warns below it). Every
+# PHP SAPI depends on its php8.x-common at the same version, so the floor on -common
+# covers cli, fpm and mod_php alike. Trixie's branch comes first so a fresh install
+# picks it, Bookworm's second; 8.3 and 8.5 are only found in third-party repositories.
+Depends: ${misc:Depends}, php-cli, php-mysql|php-mysqlnd, php-curl, php-gd, php-xml,
+ php8.4-common (>= 8.4.27) | php8.2-common (>= 8.2.35) | php8.3-common (>= 8.3.36) | php8.5-common (>= 8.5.12)
 Recommends: libapache2-mod-php|php-cgi|php-fpm, php (>= 8.0), python3
 Suggests: mariadb-server | mysql-server, php-maxminddb, php-mbstring, libmaxminddb0
 # The one version of matomo this package replaces: 1:5.3.1-2, the last one published
