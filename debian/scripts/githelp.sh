@@ -15,7 +15,8 @@ then
 	else
 		RELEASE=$(head -n 1 debian/changelog | sed 's/[()]//g' | awk '{print $2}')
 		git commit -S -m "$(head -n 1 debian/changelog)" debian/changelog
-		git tag --sign -m "release ${RELEASE}" "${RELEASE}"
+		PACKAGE=$(sed -n 's/^Package: //p' debian/control | head -n 1)
+		git tag --sign -m "${PACKAGE} ${RELEASE}" "${RELEASE}"
 
 	fi
 fi
