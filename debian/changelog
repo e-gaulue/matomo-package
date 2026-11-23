@@ -1,3 +1,36 @@
+matomo (5.14.3-1) stable; urgency=high
+
+  * Releasing Matomo 5.14.3
+  * Show which compliance policy settings a request changed. [by
+    @nathangavin] (Closes: #25375)
+  * Add AI data processing consent setting to AI Providers. [by
+    @maxtaube] (Closes: #25380)
+  * Report provider-billed cost in AI provider responses. [by
+    @brenthoneybone] (Closes: #25392)
+  * Allow compliance settings to set their position in the table. [by
+    @nathangavin] (Closes: #25400)
+  * Fix AI Providers header. [by @maxtaube] (Closes: #25404)
+  * Require AI processing consent for Goal Recommendations. [by
+    @maxtaube] (Closes: #25405)
+  * Hide top controls on the Marketplace overview. [by @snake14]
+    (Closes: #25457)
+  * Limit web searches per AI request and fix web search count. [by
+    @brenthoneybone] (Closes: #25470)
+  * #25495, #24980 Send weekly and monthly scheduled reports based on
+    the site's local day. [by @nathangavin]
+  * Fix several issues in the redesigned Marketplace. [by @lachiebol]
+    (Closes: #25511)
+  * #25515, #25440 Publish AI Providers events for cloud integration.
+    [by @brenthoneybone]
+  * Use GET for Marketplace requests without a request body. [by
+    @snake14] (Closes: #25541)
+  * Bring Goal Recommendations improvements to Matomo 5. [by @maxtaube]
+    (Closes: #25557)
+  * #25594, #25567 Allow admins to disable the PHP critical
+    vulnerability warning via config. [by @chippison]
+
+ -- Edouard Gaulué <edouard@e-gaulue.com>  Mon, 23 Nov 2026 22:24:52 +0100
+
 matomo (5.14.2-1) stable; urgency=high
 
   * Releasing Matomo 5.14.2
