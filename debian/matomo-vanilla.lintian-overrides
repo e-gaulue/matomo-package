@@ -145,6 +145,14 @@ matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/error-han
 matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/error-handler/Resources/bin/patch-type-declarations]
 matomo-vanilla: script-not-executable [usr/share/matomo/vendor/symfony/var-dumper/Resources/bin/var-dump-server]
 
+# A developer pre-push hook (PHPStan) from the TagManager repository. Upstream's
+# release cleanup removes .git and .github directories by exact name, so this one
+# reaches the archive, and it is listed in config/manifest.inc.php: dropping it
+# would make Matomo's System Check report a missing file. It is never run from an
+# installed tree. Once upstream stops shipping it, this override turns into an
+# unused-override and should be removed.
+matomo-vanilla: script-not-executable [usr/share/matomo/plugins/TagManager/.git-hooks-matomo/pre-push]
+
 
 # Temporary rule until moving to v5
 #matomo: missing-systemd-timer-for-cron-script [etc/cron.d/matomo-archive]
